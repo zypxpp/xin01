@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101218">
+<meta name="robots" content="noindex,nofollow">
+<title>新嘉通 · 交互原型</title>
+<style>
+/* ============ 新嘉通 · 交互原型 ============ */
+:root{
+  --gold:#B5822A;
+  --gold-2:#C99A3F;
+  --gold-deep:#8A5C12;
+  --gold-soft:#FBF0DA;
+  --ink:#141619;
+  --sub:#8B8B91;
+  --muted:#B3B3B8;
+  --bg:#F2F3F5;
+  --card:#FFFFFF;
+  --line:#F1F1F4;
+  --red:#D8482A;
+  --blue:#2F6FD6;
+  --radius:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#101218;color:#E8EAEF;overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+button{font-family:inherit;cursor:pointer}
+svg{display:block}
+
+/* ---------------- 舞台 / 顶栏 ---------------- */
+.stage{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  gap:30px;height:100vh;padding:78px 28px 26px;
+}
+.stage::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(50% 45% at 50% 8%,rgba(196,146,58,.13),transparent 70%),
+    radial-gradient(40% 40% at 88% 92%,rgba(82,110,190,.10),transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:66px;z-index:70;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;pointer-events:none;
+}
+.brand{display:flex;align-items:center;gap:10px;pointer-events:auto}
+.brand .mark{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(150deg,#E3B45F,#B17C22);
+  display:grid;place-items:center;box-shadow:0 6px 18px rgba(190,140,50,.28);
+}
+.brand .mark svg{width:17px;height:17px;color:#fff}
+.brand h1{font-size:15px;font-weight:600;letter-spacing:.4px;margin:0}
+.brand .chip{
+  font-size:11px;color:#E2BE7E;border:1px solid rgba(226,190,126,.35);
+  border-radius:999px;padding:2px 8px;letter-spacing:.3px;background:rgba(226,190,126,.08);
+}
+.topbar .meta{font-size:12px;color:#7E8391;letter-spacing:.3px;pointer-events:auto;display:flex;gap:14px;align-items:center}
+.topbar .meta b{color:#B9BEC9;font-weight:500}
+.mapbtn{
+  display:none;align-items:center;gap:6px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);color:#E6E8EE;border-radius:999px;
+  padding:8px 14px;font-size:12.5px;backdrop-filter:blur(10px);
+}
+
+/* ---------------- 侧边页面地图 ---------------- */
+.sidebar{
+  position:relative;width:250px;flex:0 0 250px;max-height:calc(100vh - 120px);
+  overflow-y:auto;z-index:20;padding:4px 4px 10px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;
+}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:4px}
+.side-head{padding:6px 12px 14px}
+.side-head h2{font-size:13px;color:#8E93A1;font-weight:500;letter-spacing:1.4px;margin:0 0 6px}
+.side-head p{margin:0;font-size:12px;color:#6C7280;line-height:1.6}
+.sgroup{margin:16px 0 0}
+.sgroup h3{
+  font-size:11px;color:#6E7482;letter-spacing:1.6px;font-weight:600;
+  margin:0 0 6px;padding:0 12px;display:flex;align-items:center;gap:8px;
+}
+.sgroup h3::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.07)}
+.sitem{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  background:transparent;border:0;color:#A7ADBB;font-size:13px;
+  padding:8px 12px;border-radius:9px;line-height:1.35;
+}
+.sitem:hover{background:rgba(255,255,255,.055);color:#E7EAF1}
+.sitem.active{background:rgba(201,154,63,.15);color:#EBCB92}
+.sitem .dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.5;flex:0 0 4px}
+.sitem.active .dot{opacity:1;box-shadow:0 0 0 3px rgba(201,154,63,.18)}
+.side-foot{margin:22px 12px 4px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-size:11px;color:#5D6370;line-height:1.7}
+.side-foot b{color:#8A909E;font-weight:500}
+
+/* ---------------- 手机外框 ---------------- */
+.device{
+  position:relative;flex:0 0 auto;
+  width:min(393px,calc(100vw - 40px));
+  height:min(852px,calc(100vh - 128px));
+  min-height:560px;
+  background:#08090B;
+  border-radius:54px;padding:11px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.09),
+    0 0 0 7px #1B1E24,
+    0 0 0 8px rgba(255,255,255,.045),
+    0 40px 90px -20px rgba(0,0,0,.85),
+    0 10px 30px rgba(0,0,0,.5);
+  z-index:30;
+}
+.device-inner{
+  position:relative;height:100%;width:100%;border-radius:44px;overflow:hidden;overflow:clip;
+  background:var(--bg);display:flex;flex-direction:column;
+}
+/* 刘海 */
+.device-inner::before{
+  content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:104px;height:26px;background:#08090B;border-radius:20px;z-index:60;pointer-events:none;
+}
+.statusbar{
+  height:50px;flex:0 0 50px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 26px 7px;font-size:13.5px;font-weight:600;color:#121417;
+  letter-spacing:.2px;z-index:40;position:relative;
+  background:#F5F6F8;transition:background .25s ease;
+}
+.device[data-theme="warm"] .statusbar{
+  background:linear-gradient(180deg,#FBEFDB 0%,#FAF2E4 60%,#F9F4EC 100%);
+}
+.statusbar .stat-icons{display:flex;align-items:center;gap:5px;color:#121417}
+.statusbar .stat-icons svg{opacity:.92}
+
+.screen{
+  flex:1 1 auto;overflow-y:auto;overflow-x:hidden;position:relative;
+  background:var(--bg);scrollbar-width:none;overscroll-behavior:contain;
+}
+.screen::-webkit-scrollbar{display:none}
+
+.home-bar{
+  position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
+  width:134px;height:5px;border-radius:4px;background:#0C0D0F;opacity:.28;z-index:55;pointer-events:none;
+}
+
+/* ---------------- 底部 Tab ---------------- */
+.tabbar{
+  flex:0 0 auto;display:flex;background:rgba(255,255,255,.985);
+  border-top:1px solid #EFEFF2;padding:7px 0 26px;position:relative;z-index:45;
+  backdrop-filter:blur(16px);
+}
+.tabbar.hidden{display:none}
+.tabitem{
+  flex:1;border:0;background:transparent;display:flex;flex-direction:column;
+  align-items:center;gap:3px;color:#A6A29A;font-size:10.5px;letter-spacing:.2px;
+  padding:2px 0;position:relative;transition:color .18s;
+}
+.tabitem svg{width:23px;height:23px}
+.tabitem.active{color:#B8842B;font-weight:600}
+.tabitem .badge{
+  position:absolute;top:-3px;left:calc(50% + 6px);min-width:17px;height:15px;
+  background:#EC4B3B;color:#fff;font-size:9.5px;font-weight:600;border-radius:8px;
+  display:grid;place-items:center;padding:0 4px;border:1.4px solid #fff;
+}
+
+/* ---------------- 二级页导航 ---------------- */
+.navbar{
+  position:sticky;top:0;z-index:30;height:52px;display:flex;align-items:center;
+  background:var(--bg);padding:0 6px;
+}
+.navbar::after{content:"";position:absolute;inset:0;z-index:-1;background:var(--bg)}
+.navbar h2{
+  position:absolute;left:0;right:0;text-align:center;margin:0;
+  font-size:18px;font-weight:600;letter-spacing:.4px;color:#15171A;pointer-events:none;
+}
+.iconbtn{
+  width:42px;height:42px;border:0;background:transparent;display:grid;place-items:center;
+  color:#1B1D21;border-radius:50%;
+}
+.iconbtn:active{background:rgba(0,0,0,.05)}
+
+/* ---------------- 通用页面结构 ---------------- */
+.page{padding:0 16px 34px}
+.page.pad-top{padding-top:6px}
+.section-title{font-size:17px;font-weight:600;color:#15171A;margin:20px 6px 10px;letter-spacing:.2px}
+.card{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 6px 18px rgba(20,22,26,.035);
+  overflow:hidden;
+}
+.card.pad{padding:18px 16px}
+.stack>*+*{margin-top:12px}
+.muted{color:var(--sub)}
+.small{font-size:12.5px}
+.tiny{font-size:11.5px}
+
+/* 行式键值 */
+.kv{padding:2px 16px}
+.kv .row{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:18px;
+  padding:14px 0;border-bottom:1px solid #F5F5F7;font-size:15px;
+}
+.kv .row:last-child{border-bottom:0}
+.kv .k{color:#8B8B91;flex:0 0 auto;letter-spacing:.2px}
+.kv .v{color:#15171A;text-align:right;word-break:break-word;line-height:1.5}
+.kv .v.num{font-variant-numeric:tabular-nums}
+.kv.tight .row{padding:12px 0}
+.kv.compact .row{font-size:13.5px;padding:11px 0;gap:12px}
+.kv.compact .v{max-width:64%}
+
+/* ---------------- 首页公共头部 ---------------- */
+.root{min-height:100%;padding-bottom:14px}
+.root-head{
+  position:relative;padding:6px 22px 30px;
+  background:
+    radial-gradient(120% 95% at 80% -10%,rgba(255,219,166,.72) 0%,rgba(255,219,166,0) 58%),
+    radial-gradient(80% 70% at 100% 40%,rgba(226,196,148,.30) 0%,rgba(226,196,148,0) 60%),
+    linear-gradient(172deg,#FBEFDB 0%,#FBF6EF 52%,#F4F5F7 100%);
+}
+.root-head h1{
+  margin:0;font-size:26px;font-weight:700;letter-spacing:.6px;color:#131518;
+}
+.greet{
+  margin:26px 0 0;font-size:16px;color:#7E5F2C;font-weight:500;letter-spacing:.2px;
+}
+.art{
+  position:absolute;right:2px;top:-4px;width:200px;height:176px;pointer-events:none;z-index:0;
+}
+.art .orb{
+  position:absolute;right:-30px;top:-10px;width:200px;height:190px;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,183,86,.45),rgba(255,201,128,.10) 62%,transparent 75%);
+  filter:blur(1px);
+}
+.art .ring{
+  position:absolute;right:26px;top:58px;width:118px;height:44px;border-radius:50%;
+  border:2px solid rgba(214,160,70,.45);transform:rotate(-14deg);
+}
+.art .glyph{
+  position:absolute;right:26px;top:18px;width:104px;height:104px;color:#DDA748;
+  filter:drop-shadow(0 16px 20px rgba(186,129,32,.30));
+}
+.art.small .glyph{right:16px;top:-6px;width:82px;height:82px;opacity:.92}
+.art.small .orb{right:-52px;top:-34px;width:176px;height:156px}
+
+.root > .body{padding:0 16px;position:relative;z-index:1}
+
+/* 功能格 */
+.grid{display:grid;gap:11px}
+.grid.g3{grid-template-columns:repeat(3,1fr)}
+.grid.g2{grid-template-columns:repeat(2,1fr)}
+.fcard{
+  background:#fff;border:0;border-radius:15px;padding:20px 8px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  box-shadow:0 1px 2px rgba(26,24,20,.03),0 8px 20px rgba(26,24,20,.045);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.fcard:active{transform:scale(.975)}
+.fcard .ic{
+  width:58px;height:58px;border-radius:15px;display:grid;place-items:center;
+  background:linear-gradient(158deg,#FDF4E4 0%,#FAF7F0 70%,#FFFFFF 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 12px rgba(206,155,66,.10);
+  color:#C08E33;
+}
+.fcard .ic svg{width:34px;height:34px}
+.fcard .label{font-size:14px;font-weight:600;color:#1B1D21;letter-spacing:.2px}
+.fcard.off{
+  opacity:.52;filter:grayscale(1);cursor:not-allowed;box-shadow:none;
+  background:linear-gradient(#FBFBFC,#FBFBFC);
+}
+.fcard.off:active{transform:none}
+
+/* 工作台 banner */
+.wb-banner{
+  position:relative;overflow:hidden;border-radius:16px;padding:20px 18px;
+  background:linear-gradient(104deg,#FFF4E2 0%,#FFEBD0 55%,#FFE7C8 100%);
+  box-shadow:0 8px 22px rgba(206,152,60,.10);
+  margin-bottom:14px;
+}
+.wb-banner h3{
+  margin:0;font-size:17px;line-height:1.75;font-weight:700;color:#7C4B0C;letter-spacing:.4px;
+}
+.wb-banner .env{
+  position:absolute;right:-4px;bottom:-10px;width:118px;height:96px;color:#E4853A;opacity:.95;
+  filter:drop-shadow(0 10px 14px rgba(196,110,40,.22));
+}
+.wb-banner .env svg{width:100%;height:100%}
+
+/* ---------------- 我的 ---------------- */
+.profile{
+  display:flex;align-items:center;gap:14px;padding:18px 16px;border-radius:16px;background:#fff;
+  position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(26,24,20,.03),0 8px 20px rgba(26,24,20,.045);
+}
+.profile .avatar{
+  width:52px;height:52px;border-radius:50%;flex:0 0 52px;display:grid;place-items:center;
+  background:linear-gradient(150deg,#E8C281,#C89A45);color:#fff;
+  box-shadow:0 6px 14px rgba(190,140,50,.28);
+}
+.profile .avatar svg{width:30px;height:30px}
+.profile .who{flex:1;min-width:0}
+.profile .who b{display:block;font-size:19px;font-weight:600;color:#15171A;letter-spacing:.2px}
+.profile .who span{display:block;margin-top:4px;font-size:12.5px;color:#8B8B91}
+.profile>.chev{margin-left:auto;color:#C4C4C9}
+.list-row{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#fff;border:0;border-bottom:1px solid #F4F4F6;padding:16px;
+  font-size:16px;color:#15171A;text-align:left;
+}
+.list-row:last-child{border-bottom:0}
+.list-row .right{display:flex;align-items:center;gap:8px;font-size:14px;color:#C4C4C9}
+.list-row .right .gold{color:#C08E33;font-size:14.5px}
+.list-row .chev{color:#C9C9CE}
+
+/* ---------------- 搜索 / 筛选 ---------------- */
+.searchbar{display:flex;gap:10px;align-items:center;padding:4px 16px 0}
+.search{
+  flex:1;height:44px;border-radius:10px;background:#fff;display:flex;align-items:center;
+  gap:8px;padding:0 12px;color:#B6B6BB;box-shadow:0 1px 2px rgba(20,22,26,.03);
+}
+.search svg{width:18px;height:18px;flex:0 0 18px}
+.search input{
+  flex:1;border:0;outline:0;background:transparent;font-size:15px;color:#15171A;
+  min-width:0;letter-spacing:.2px;
+}
+.search input::placeholder{color:#B6B6BB}
+.btn-gold{
+  height:44px;padding:0 20px;border-radius:10px;border:0;color:#fff;font-size:15px;
+  background:linear-gradient(180deg,#C79632,#B07C24);
+  box-shadow:0 4px 12px rgba(178,128,38,.22);letter-spacing:.5px;
+}
+.btn-gold:active{filter:brightness(.95)}
+
+.toolrow{display:flex;align-items:center;gap:26px;padding:14px 20px 4px}
+.tool{
+  display:flex;align-items:center;gap:7px;font-size:15px;color:#3A3C40;background:none;border:0;padding:2px 0;
+}
+.tool svg{width:17px;height:17px;color:#C08E33}
+.tool.off{color:#A6A6AC;cursor:not-allowed}
+.tool.off svg{color:#C9C9CE}
+
+.chiprow{display:flex;gap:6px;padding:14px 16px 2px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.chiprow::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 8px;border-radius:999px;
+  background:#fff;border:0;font-size:13px;color:#2C2E33;box-shadow:0 1px 2px rgba(20,22,26,.03);
+  white-space:nowrap;
+}
+.chip svg{width:12px;height:12px;color:#9A9AA0}
+.chip.on{gap:10px;color:#1B1D21}
+.chip.on svg{color:#C08E33}
+.chip.off{color:#A9A9AF;cursor:not-allowed;box-shadow:none;background:#F7F7F9}
+.chip.off svg{color:#CFCFD4}
+.chip.more{color:#C08E33;gap:7px;background:transparent;box-shadow:none;padding-left:2px}
+.chip.more svg{width:16px;height:16px;color:#C08E33}
+
+/* ---------------- 客户列表 ---------------- */
+.cu-card{
+  background:#fff;border-radius:16px;padding:20px 18px 6px;margin-bottom:12px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04);
+}
+.cu-card .name{font-size:20px;font-weight:600;color:#15171A;letter-spacing:.4px;margin-bottom:6px}
+.cu-card .kv{padding:0}
+.cu-card .kv .row{font-size:14.5px;padding:12px 0}
+.cu-card .kv .k{color:#8B8B91}
+
+/* 客户详情 */
+.cust-hero{
+  background:#fff;border-radius:16px;padding:20px 18px;display:flex;align-items:flex-start;
+  gap:12px;box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04);
+}
+.cust-hero .nm{font-size:25px;font-weight:700;letter-spacing:.5px;color:#15171A;line-height:1.2}
+.cust-hero .ph{margin-top:9px;font-size:14px;color:#9A9AA0;letter-spacing:.5px}
+.cust-hero .tags{display:flex;gap:7px;margin-left:auto;padding-top:4px}
+.tag{
+  display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:6px;
+  background:#FBF1DF;color:#B07C24;font-size:12.5px;white-space:nowrap;
+}
+.tag.plain{background:#F7F7F9;color:#8B8B91}
+.tag.blue{background:#EEF2FC;color:#4B6FD0}
+.tag.red{background:#FDF0EC;color:#D8482A}
+
+.acct-link{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;background:#fff;border:0;text-align:left;
+}
+.acct-link .t{font-size:16.5px;font-weight:600;color:#15171A;padding:16px 0}
+.acct-link .chev{color:#C4C4C9}
+.acct-link+ .card{margin-top:0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 0}
+.sec-head b{font-size:16.5px;font-weight:600;color:#15171A}
+
+/* ---------------- 账户详情 ---------------- */
+.acct-chip{
+  display:inline-flex;align-items:center;background:#fff;border-radius:10px;
+  padding:10px 14px;font-size:14px;color:#5F6167;box-shadow:0 1px 2px rgba(20,22,26,.03);
+  letter-spacing:.2px;
+}
+.overview{background:#fff;border-radius:16px;padding:18px 18px 16px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.overview .top{display:flex;justify-content:space-between;align-items:flex-start}
+.overview .top .l{font-size:15px;color:#3A3C40;display:flex;align-items:center;gap:9px}
+.cur-pill{
+  display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 9px;border-radius:8px;
+  border:1px solid #ECECEF;background:#fff;font-size:12.5px;color:#4B4D52;
+}
+.cur-pill .flag{font-size:13px;line-height:1}
+.cur-pill svg{width:11px;height:11px;color:#A7A7AC}
+.overview .big{font-size:29px;font-weight:600;color:#15171A;letter-spacing:-.3px;margin-top:6px;font-variant-numeric:tabular-nums}
+.overview .big.neg{color:#15171A}
+.overview .right-v{text-align:right}
+.overview .right-v .lbl{font-size:12.5px;color:#8B8B91}
+.overview .right-v .val{font-size:15px;color:#15171A;margin-top:6px;font-variant-numeric:tabular-nums}
+.ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px;margin-top:20px}
+.ov-grid .lbl{font-size:12.5px;color:#8B8B91;letter-spacing:.1px}
+.ov-grid .val{font-size:15px;color:#15171A;margin-top:5px;font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+.ov-grid .val.red{color:#D8482A}
+.shortcuts{background:#fff;border-radius:16px;padding:16px 6px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.shortcut{
+  border:0;background:transparent;padding:10px 2px 14px;display:flex;flex-direction:column;
+  align-items:center;gap:9px;color:#2B2D31;font-size:12.5px;border-radius:12px;
+}
+.shortcut:active{background:#FAFAFB}
+.shortcut svg{width:31px;height:31px}
+.shortcut.off{opacity:.38;filter:grayscale(1);cursor:not-allowed}
+.seg{display:flex;gap:9px;padding:4px 16px 0}
+.seg .sbtn{
+  height:36px;padding:0 18px;border-radius:6px;background:#fff;border:1px solid transparent;
+  font-size:14.5px;color:#7C7C82;
+}
+.seg .sbtn.on{border-color:#C99A3F;color:#B07C24;font-weight:500;background:#FFFDF8}
+.seg .sbtn.off{opacity:.4;cursor:not-allowed}
+.hold-card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(20,22,26,.03)}
+.hold-card h4{margin:0;font-size:16px;font-weight:600;line-height:1.5;color:#15171A;letter-spacing:.2px}
+.hold-card .code{font-size:12px;color:#ADADB3;margin-top:7px;letter-spacing:.3px}
+.hold-card .tags{display:flex;gap:6px;justify-content:flex-end;margin-top:-18px}
+.hold-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px;margin-top:20px}
+.hold-metrics .lbl{font-size:12.5px;color:#8B8B91}
+.hold-metrics .val{font-size:15.5px;color:#15171A;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.4}
+.end-note{text-align:center;font-size:12.5px;color:#B0B0B5;padding:26px 0 6px}
+
+
+/* ---------------- 我的资产 ---------------- */
+.asset-tabs{display:flex;gap:10px;padding:0 16px 2px}
+.asset-tabs .atab{
+  flex:1;height:44px;border-radius:8px;background:#fff;border:1px solid transparent;
+  font-size:14.5px;color:#7C7C82;
+}
+.asset-tabs .atab.on{background:#FFFDF8;border-color:#C99A3F;color:#B07C24;font-weight:500}
+.asset-tabs .atab.off{opacity:.45;cursor:not-allowed}
+.pnl-card{background:#fff;border-radius:16px;padding:18px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.pnl-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pnl-head .l{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600;color:#15171A}
+.pnl-head .r{display:flex;align-items:center;gap:7px;font-size:13.5px;color:#3A3C40}
+.info-i{color:#B9B9BE;width:15px;height:15px}
+.pnl-amount{font-size:32px;font-weight:600;color:#D8482A;margin-top:12px;letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+.pnl-range{font-size:12.5px;color:#9A9AA0;margin-top:14px;padding-top:13px;border-top:1px solid #F4F4F6}
+.chart-card{background:#fff;border-radius:16px;padding:18px 12px 8px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.chart-card h4{margin:0 0 2px 6px;font-size:17px;font-weight:600;color:#15171A}
+.chart-wrap{position:relative;margin-top:6px}
+.chart-wrap svg{width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.chart-tip{
+  position:absolute;background:#fff;border-radius:9px;padding:8px 12px;
+  box-shadow:0 8px 24px rgba(20,22,26,.14);pointer-events:none;
+  font-size:12.5px;color:#8B8B91;white-space:nowrap;transform:translate(-14%,-100%);
+  transition:opacity .12s;line-height:1.5;z-index:3;
+}
+.chart-tip b{display:block;font-size:16px;color:#D8482A;font-weight:600;margin-top:3px}
+.chart-axis-pill{
+  position:absolute;background:#5A5C63;color:#fff;font-size:11.5px;border-radius:5px;
+  padding:3px 7px;transform:translate(-50%,0);pointer-events:none;white-space:nowrap;
+}
+.detail-head{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 10px}
+.detail-head b{font-size:16.5px;font-weight:600;color:#15171A}
+.detail-head span{font-size:12px;color:#A5A5AA}
+.pnl-item{padding:15px 16px;border-bottom:1px solid #F5F5F7;position:relative}
+.pnl-item:last-child{border-bottom:0}
+.pnl-item .line1{display:flex;justify-content:space-between;gap:14px}
+.pnl-item h5{margin:0;font-size:15px;font-weight:600;color:#15171A;line-height:1.45;letter-spacing:.1px}
+.pnl-item .amt{font-size:15px;color:#D8482A;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pnl-item .amt.zero{color:#15171A}
+.pnl-item .code{font-size:11.5px;color:#ADADB3;margin-top:6px;letter-spacing:.2px}
+.pnl-item .tags{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+.pnl-item .tags .tag{height:22px;font-size:11.5px;padding:0 7px;border-radius:4px}
+.more-link{
+  width:100%;border:0;background:transparent;color:#C08E33;font-size:14px;
+  padding:16px 0 18px;letter-spacing:.5px;
+}
+
+/* 资产分布 */
+.cur-card{background:#fff;border-radius:16px;padding:18px 18px 16px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.cur-card .head{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:600;color:#15171A}
+.cur-card .head .flag{font-size:18px;line-height:1}
+.cur-card .lbl{font-size:12.5px;color:#9A9AA0;margin-top:14px}
+.cur-card .num{font-size:22px;color:#15171A;margin-top:5px;font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+
+/* ---------------- 资金明细 ---------------- */
+.filterbar{display:flex;gap:10px;padding:6px 16px 0}
+.filterbar .fbtn{
+  flex:1;height:44px;border-radius:9px;background:#fff;border:0;display:flex;align-items:center;
+  justify-content:space-between;padding:0 13px;font-size:14.5px;color:#3A3C40;
+  box-shadow:0 1px 2px rgba(20,22,26,.03);
+}
+.filterbar .fbtn svg{width:13px;height:13px;color:#9A9AA0}
+.cash-row{display:flex;justify-content:space-between;gap:14px;padding:15px 16px;border-bottom:1px solid #F5F5F7}
+.cash-row:last-child{border-bottom:0}
+.cash-row .l{min-width:0;flex:1}
+.cash-row .l b{display:block;font-size:15px;font-weight:500;color:#15171A}
+.cash-row .l span{display:block;font-size:12.5px;color:#A5A5AA;margin-top:4px}
+.cash-row .l span.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cash-row .r{text-align:right;font-size:14.5px;color:#D8482A;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.5}
+.cash-row .r small{display:block;font-size:12px;color:#A5A5AA;margin-top:2px}
+.empty{padding:46px 0 52px;text-align:center;color:#B0B0B5;font-size:13.5px}
+.empty svg{width:44px;height:44px;margin:0 auto 12px;color:#DEDEE3}
+
+/* ---------------- 银行卡 ---------------- */
+.bank-card{background:#fff;border-radius:16px;padding:16px 18px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04);
+  width:100%;border:0;text-align:left;position:relative}
+.bank-card .top{display:flex;align-items:center;gap:10px}
+.bank-logo{
+  width:30px;height:30px;border-radius:6px;background:#F5F5F7;display:grid;place-items:center;
+  color:#BDBDC2;flex:0 0 30px;
+}
+.bank-logo svg{width:17px;height:17px}
+.bank-card .bname{font-size:16px;font-weight:600;color:#15171A;letter-spacing:.2px}
+.bank-card .status{margin-left:auto;font-size:13px;color:#8B8B91}
+.bank-card .acct{font-size:12px;color:#A5A5AA;margin-top:3px}
+.bank-card .no{font-size:22px;font-weight:600;color:#15171A;margin-top:16px;letter-spacing:1px}
+.bank-card .chev{position:absolute;right:14px;bottom:26px;color:#C4C4C9}
+.bank-hero .no{font-size:24px;letter-spacing:1.5px;margin-top:18px}
+.bank-hero .bname{font-size:16px;font-weight:600;color:#15171A}
+.bank-hero .no{color:#15171A}
+
+/* ---------------- 订单 ---------------- */
+.order-day{display:flex;align-items:center;gap:7px;font-size:15px;color:#2C2E33;padding:18px 20px 10px;font-weight:500}
+.order-day .q{width:16px;height:16px;border-radius:50%;background:#E9E9EC;color:#8B8B91;font-size:11px;display:grid;place-items:center}
+.order-item{background:#fff;padding:15px 18px;display:block;width:100%;border:0;text-align:left;border-bottom:1px solid #F7F7F9}
+.order-item:last-child{border-bottom:0}
+.order-item .otitle{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:600;color:#D8482A}
+.order-item .pname{font-size:14px;color:#4A4C52;margin-top:8px;line-height:1.5}
+.order-item .tags{display:flex;gap:6px;margin-top:9px}
+.order-item .bot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px}
+.order-item .time{font-size:12.5px;color:#A5A5AA;font-variant-numeric:tabular-nums}
+.order-item .shares{font-size:18px;color:#15171A;font-variant-numeric:tabular-nums}
+.order-item .shares small{font-size:13px;color:#5F6167;margin-left:2px}
+.order-item .state{font-size:13px;color:#A5A5AA;text-align:right;margin-top:2px}
+.ord-hero{background:#fff;border-radius:16px;padding:20px 18px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.ord-hero .tagline{display:flex;justify-content:space-between;align-items:center}
+.ord-hero .tagline .t{font-size:17px;font-weight:600;color:#D8482A}
+.ord-hero .tagline .s{font-size:14px;color:#9A9AA0}
+.ord-hero .pname{font-size:18px;font-weight:600;color:#15171A;margin-top:12px;line-height:1.5}
+.ord-hero .num{font-size:20px;color:#15171A;margin-top:16px;font-variant-numeric:tabular-nums}
+
+/* ---------------- 消息 ---------------- */
+.msg-ov{background:#fff;border-radius:16px;padding:2px 16px 12px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.msg-ov .oh{display:flex;align-items:center;gap:8px;padding:14px 0 4px}
+.msg-ov .oh .bell{color:#E24B3C;width:19px;height:19px}
+.msg-ov .oh b{font-size:16px;font-weight:600;color:#15171A}
+.msg-ov .oh .none{margin-left:auto;margin-right:8px;font-size:13px;color:#A5A5AA}
+.msg-ov .oh .none + .tgl{margin-left:0}
+.msg-ov .oh .tgl{margin-left:auto;background:none;border:0;color:#9A9AA0;display:grid;place-items:center;width:26px;height:26px;padding:0}
+.msg-ov .oh .tgl svg{width:16px;height:16px;transition:transform .2s}
+.msg-ov.closed .body{display:none}
+.msg-ov .grouplbl{font-size:12.5px;color:#A5A5AA;margin:12px 0 2px;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ovrow{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#F8F8FA;border:0;border-radius:10px;padding:11px 13px;margin-top:7px;
+  font-size:15px;color:#3A3C40;text-align:left;
+}
+.ovrow .cnt{display:flex;align-items:center;gap:9px;color:#15171A}
+.ovrow .cnt b{font-weight:500}
+.ovrow .arrow{
+  width:22px;height:22px;border-radius:50%;background:#C08E33;color:#fff;
+  display:grid;place-items:center;flex:0 0 22px;
+}
+.ovrow .arrow svg{width:11px;height:11px}
+.ovrow.off{opacity:.55;cursor:not-allowed}
+.ovrow.off .arrow{background:#DCDCE1}
+.msg-cat{
+  background:#fff;border-radius:16px;padding:18px 16px;display:flex;gap:14px;width:100%;
+  border:0;text-align:left;position:relative;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04);
+}
+.msg-cat .tile{
+  width:52px;height:52px;flex:0 0 52px;border-radius:13px;display:grid;place-items:center;
+}
+.msg-cat .tile svg{width:27px;height:27px}
+.msg-cat .tile.blue{background:linear-gradient(150deg,#E8EEFF,#DCE6FD);color:#3E6BE0}
+.msg-cat .tile.gold{background:linear-gradient(150deg,#FFF3DC,#FBE8C6);color:#C08E33}
+.msg-cat .tile.purple{background:linear-gradient(150deg,#EFEAFE,#E4DBFC);color:#6D5ACF}
+.msg-cat .body{flex:1;min-width:0}
+.msg-cat .topline{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.msg-cat .topline b{font-size:17px;font-weight:600;color:#15171A}
+.msg-cat .topline span{font-size:11.5px;color:#A5A5AA;white-space:nowrap}
+.msg-cat p{margin:8px 0 0;font-size:13px;line-height:1.65;color:#8B8B91;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.msg-cat .badge{
+  position:absolute;left:44px;top:30px;min-width:20px;height:18px;padding:0 5px;
+  background:#EC4B3B;color:#fff;font-size:10px;border-radius:9px;display:grid;place-items:center;
+  border:1.5px solid #fff;
+}
+.msg-day{text-align:center;font-size:12.5px;color:#ADADB3;padding:16px 0 8px;letter-spacing:.3px}
+.msg-card{background:#fff;border-radius:16px;padding:18px 16px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.msg-card h4{margin:0;font-size:15.5px;font-weight:600;color:#15171A;line-height:1.55;letter-spacing:.1px}
+.msg-card .desc{margin:7px 0 0;font-size:13px;color:#8B8B91;line-height:1.6}
+.msg-card .fields{background:#F8F8FA;border-radius:10px;padding:7px 12px;margin-top:13px}
+.msg-card .fields .row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;font-size:13px;}
+.msg-card .fields .row .k{color:#8B8B91;flex:0 0 auto}
+.msg-card .fields .row .v{color:#2E3035;text-align:right;line-height:1.55;word-break:break-word}
+.msg-card .fields .row .v.warn{color:#D89A2B}
+.msg-card .fields .row .v.num{font-variant-numeric:tabular-nums}
+
+/* ---------------- 产品 ---------------- */
+.pcard{
+  position:relative;overflow:hidden;background:#fff;border-radius:16px;padding:17px 17px 13px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04);
+  border:0;width:100%;text-align:left;display:block;
+}
+.pcard::after{
+  content:"";position:absolute;right:-90px;top:-60px;width:290px;height:250px;pointer-events:none;
+  background:repeating-radial-gradient(circle at 70% 40%,rgba(214,178,116,.15) 0 1px,transparent 1px 7px);
+  border-radius:50%;opacity:.85;
+}
+.pcard .pline{display:flex;gap:12px;align-items:flex-start;position:relative;z-index:1}
+.pcard h4{margin:0;font-size:17px;font-weight:600;line-height:1.45;color:#15171A;letter-spacing:.2px;flex:1}
+.pcard .tags{display:flex;gap:4px;justify-content:flex-end;white-space:nowrap}
+.pcard .code{font-size:11.5px;color:#A9A9AE;margin-top:9px;letter-spacing:0;position:relative;z-index:1}
+.pcard .coderow{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;z-index:1}
+.pcard .coderow .code{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard .coderow .tags{flex:0 0 auto}
+.pcard .tags .tag{font-size:11px;height:22px;padding:0 6px;border-radius:5px}
+.pcard .coderow .code{margin-top:0}
+.pmetrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px;position:relative;z-index:1}
+.pmetrics .v{font-size:22px;font-weight:600;color:#15171A;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.pmetrics .v.red{color:#D8482A}
+.pmetrics .v.right{text-align:right}
+.pmetrics .k{font-size:12px;color:#A5A5AA;margin-top:6px}
+.pmetrics .c{text-align:center}
+.pmetrics .c .k{text-align:center}
+.pmetrics .r{text-align:right}
+.pmetrics .r .k{text-align:right}
+
+/* 产品详情 */
+.pd-tabs{
+  position:sticky;top:52px;z-index:26;display:flex;gap:0;overflow-x:auto;
+  background:#F4F5F7;padding:0 10px;scrollbar-width:none;
+  border-bottom:1px solid #EDEDF0;
+}
+.pd-tabs::-webkit-scrollbar{display:none}
+.pd-tab{
+  background:none;border:0;padding:12px 6px 11px;font-size:13px;color:#55575D;
+  white-space:nowrap;position:relative;letter-spacing:.2px;
+}
+.pd-tab.on{color:#2F6FD6;font-weight:600}
+.pd-tab.on::after{
+  content:"";position:absolute;left:6px;right:6px;bottom:0;height:2.5px;
+  background:#2F6FD6;border-radius:3px;
+}
+.pd-hero{background:#fff;border-radius:16px;padding:18px;
+  box-shadow:0 1px 2px rgba(20,22,26,.03),0 8px 20px rgba(20,22,26,.04)}
+.pd-hero h3{margin:0;font-size:18px;font-weight:600;line-height:1.5;color:#15171A;letter-spacing:.2px}
+.pd-hero .code{font-size:12px;color:#A9A9AE;margin-top:7px;letter-spacing:.3px}
+.pd-hero .coderow .code{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pd-hero .coderow .tags{flex:0 0 auto}
+.pd-hero .coderow .tag{font-size:11.5px;height:23px;padding:0 7px}
+.pd-hero .tags{display:flex;gap:6px;margin-top:10px}
+.pd-hero .metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:20px}
+.pd-hero .metrics .v{font-size:23px;font-weight:600;color:#15171A;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.pd-hero .metrics .v.red{color:#D8482A}
+.pd-hero .metrics .v.right{text-align:right}
+.pd-hero .metrics .k{font-size:12px;color:#A5A5AA;margin-top:6px}
+.pd-sec{padding-top:2px}
+.sec-head-row{display:flex;align-items:center;justify-content:space-between;margin:22px 6px 10px}
+.sec-head-row h3{font-size:17px;font-weight:600;color:#15171A;margin:0;letter-spacing:.2px}
+.export{display:flex;align-items:center;gap:5px;background:none;border:0;color:#C08E33;font-size:13.5px}
+.export svg{width:15px;height:15px}
+.chart-empty{height:250px;display:grid;place-items:center;color:#B0B0B5;font-size:13.5px;letter-spacing:.3px}
+.range-tabs{display:flex;gap:6px;background:#F4F4F6;border-radius:9px;padding:3px;margin-top:8px}
+.range-tab{
+  flex:1;border:0;background:transparent;border-radius:7px;padding:8px 4px;
+  font-size:12.5px;color:#7C7C82;white-space:nowrap;
+}
+.range-tab.on{background:#fff;color:#15171A;font-weight:500;box-shadow:0 1px 4px rgba(20,22,26,.06)}
+.perf-head{display:flex;justify-content:space-between;font-size:13px;color:#A5A5AA;padding:12px 16px 10px;border-bottom:1px solid #F4F4F6}
+.perf-row{display:flex;justify-content:space-between;padding:14px 16px;font-size:14.5px;border-bottom:1px solid #F5F5F7;color:#2E3035}
+.perf-row:last-child{border-bottom:0}
+.perf-row .p{color:#D8482A;font-variant-numeric:tabular-nums}
+.perf-row .p.zero{color:#15171A}
+.rule-seg{display:flex}
+.rule-seg button{
+  flex:1;border:0;background:none;padding:16px 0 14px;font-size:16px;color:#7C7C82;position:relative;
+}
+.rule-seg button.on{color:#B07C24;font-weight:600}
+.rule-seg button.on::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:38px;height:2.5px;background:#C99A3F;border-radius:3px}
+.rule-body{padding:18px 16px 16px}
+.steps{display:flex;align-items:flex-start;position:relative;padding-top:4px}
+.steps::before{content:"";position:absolute;left:12%;right:12%;top:32px;border-top:1.5px dashed #E6E6EA}
+.steps .step{flex:1;text-align:center;position:relative;z-index:1}
+.steps .dot{width:9px;height:9px;border-radius:50%;background:#C99A3F;margin:10px auto 14px}
+.steps .k{font-size:13px;color:#8B8B91}
+.steps .v{font-size:14px;color:#15171A;margin-bottom:5px;font-variant-numeric:tabular-nums}
+.notice{
+  background:#FDF6E8;color:#B07C24;border-radius:9px;padding:12px 13px;font-size:13px;
+  line-height:1.65;margin-top:16px;
+}
+.fee-row{display:flex;justify-content:space-between;padding:13px 16px;font-size:14.5px;border-bottom:1px solid #F5F5F7}
+.fee-row:last-child{border-bottom:0}
+.fee-row .k{color:#8B8B91}
+.fee-row .v{color:#15171A;font-variant-numeric:tabular-nums}
+.doc-row{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:16px;border:0;background:#fff;border-bottom:1px solid #F4F4F6;font-size:15.5px;color:#15171A;text-align:left;
+}
+.doc-row:last-child{border-bottom:0}
+.doc-row .chev{color:#C4C4C9}
+.holder-note{font-size:12px;color:#A5A5AA;padding:0 6px 10px}
+.holder{background:#fff;padding:16px 18px;border-bottom:1px solid #F5F5F7}
+.holder:last-child{border-bottom:0}
+.holder .top{display:flex;align-items:flex-start;justify-content:space-between}
+.holder .nm{font-size:17px;font-weight:600;color:#15171A;letter-spacing:.4px}
+.holder .id{font-size:12.5px;color:#A5A5AA;margin-top:5px;letter-spacing:.3px}
+.holder .metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 8px;margin-top:16px}
+.holder .metrics .lbl{font-size:12px;color:#8B8B91}
+.holder .metrics .val{font-size:14.5px;color:#15171A;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.4}
+.holder .metrics .val.red{color:#D8482A}
+
+/* ---------------- 弹层 / 提示 ---------------- */
+.scrim{
+  position:absolute;inset:0;background:rgba(10,12,16,.42);z-index:85;opacity:0;
+  pointer-events:none;transition:opacity .22s;
+}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{
+  position:absolute;left:50%;bottom:0;transform:translate(-50%,102%);
+  width:100%;background:#F7F7F9;border-radius:20px 20px 0 0;
+  z-index:90;transition:transform .26s cubic-bezier(.22,.7,.3,1);
+  padding:6px 0 28px;box-shadow:0 -10px 40px rgba(0,0,0,.18);
+}
+.sheet.show{transform:translate(-50%,0)}
+.sheet .sh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
+.sheet .sh b{font-size:16px;font-weight:600;color:#15171A}
+.sheet .sh button{border:0;background:none;font-size:14px;color:#8B8B91;padding:4px}
+.sheet .opts{max-height:52vh;overflow-y:auto;padding:6px 10px}
+.opt{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  background:#fff;border:0;border-radius:11px;padding:15px 14px;margin-top:8px;
+  font-size:15px;color:#2E3035;text-align:left;
+}
+.opt.on{color:#B07C24;font-weight:500}
+.opt svg{width:17px;height:17px;color:#C08E33}
+.toast{
+  position:absolute;left:50%;bottom:58px;transform:translate(-50%,10px);
+  background:rgba(22,24,29,.9);color:#fff;font-size:13px;padding:10px 16px;
+  border-radius:10px;z-index:120;opacity:0;pointer-events:none;
+  width:max-content;max-width:82%;text-align:center;line-height:1.5;backdrop-filter:blur(8px);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.hint{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  font-size:11.5px;color:#5F6572;letter-spacing:.4px;z-index:10;
+}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width:1180px){
+  .sidebar{width:212px;flex:0 0 212px}
+  .stage{gap:20px;padding-left:18px;padding-right:18px}
+}
+@media (max-width:900px){
+  body{background:#0B0D12;overflow:hidden}
+  .topbar{display:none}
+  .stage{padding:0;gap:0;height:100dvh;display:block}
+  .topbar{height:52px;padding:0 14px;pointer-events:none}
+  .topbar .meta{display:none}
+  .brand .chip{display:none}
+  .mapbtn{display:inline-flex;pointer-events:auto}
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:280px;max-height:none;z-index:95;
+    background:#151821;padding:74px 8px 20px;transform:translateX(-100%);
+    transition:transform .26s cubic-bezier(.22,.7,.3,1);overflow-y:auto;
+  }
+  .sidebar.open{transform:none}
+  .device{
+    width:100vw;height:100dvh;min-height:0;border-radius:0;padding:0;box-shadow:none;
+  }
+  .device-inner{border-radius:0}
+  .device-inner::before{display:none}
+  .statusbar{height:46px;flex-basis:46px;padding-top:6px;align-items:center}
+  .hint{display:none}
+  .sheet{width:100vw}
+  .toast{bottom:100px}
+}
+@media (max-height:700px) and (min-width:901px){
+  .device{height:calc(100vh - 96px)}
+  .stage{padding-top:64px;padding-bottom:10px}
+}
+
+/* ---------------- 补充：原型标注 / 交互细节 ---------------- */
+.proto-note{
+  margin:14px 2px;padding:11px 13px;border:1px dashed #E6D6B9;border-radius:11px;
+  background:#FCF7EE;color:#9A7B45;font-size:12px;line-height:1.7;
+}
+.sec-navrow{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  background:none;border:0;padding:22px 6px 10px;font-size:16.5px;color:#15171A;text-align:left;
+}
+.sec-navrow b{font-weight:600}
+.sec-navrow svg{color:#C4C4C9}
+.sec-navrow.off{opacity:.4;cursor:not-allowed}
+.art .glyph svg{width:100%;height:100%}
+.chart-axis-pill.y{left:0;transform:translate(0,-50%);}
+.chart-axis-pill.x{transform:translate(-50%,0);}
+.pd-tab.off{color:#B4B4B9;cursor:not-allowed}
+.export.off{color:#C9C9CE;cursor:not-allowed}
+.doc-row.off{opacity:.45;cursor:not-allowed}
+.rule-seg button.off{opacity:.45;cursor:not-allowed}
+.chip.more.off{color:#B4B4B9;opacity:.75}
+.chip.more.off svg{color:#C9C9CE}
+.cash-row .l span.name{color:#A5A5AA}
+#sec-base,#sec-nav,#sec-perf,#sec-rule,#sec-doc,#sec-holder,#sec-hero{scroll-margin-top:112px}
+.top-fab{
+  position:absolute;right:16px;bottom:104px;width:52px;height:52px;border-radius:50%;
+  border:0;background:rgba(176,176,182,.86);color:#fff;font-size:11.5px;line-height:1.35;
+  display:grid;place-items:center;z-index:52;opacity:0;pointer-events:none;
+  backdrop-filter:blur(6px);
+  box-shadow:0 6px 20px rgba(20,22,26,.18);letter-spacing:.2px;text-align:center;
+}
+.top-fab.show{opacity:1;pointer-events:auto}
+.steps .step .v{height:18px;line-height:18px}
+@media (max-width:900px){
+  .top-fab{bottom:96px}
+}
+
+/* 我的：渐变铺满整个屏幕 */
+.root.mine{background:none}
+.root.mine .root-head{background:none;padding-bottom:16px}
+.root.mine .profile{padding:20px 16px}
+#screen[data-route="mine"]{
+  background:
+    radial-gradient(105% 46% at 88% -4%,rgba(255,214,155,.62) 0%,rgba(255,214,155,0) 64%),
+    linear-gradient(180deg,#FBEFDB 0%,#FCF6EE 30%,#F7F4EF 48%,#F2F3F5 68%,#F2F3F5 100%);
+}
+
+/* 银行卡详情 */
+.bank-card.bank-hero{display:block;padding:22px 18px 24px}
+.bank-hero .no{margin-top:24px;font-size:25px}
+.bank-hero .bank-logo{width:34px;height:34px;flex:0 0 34px}
+.bank-hero .bank-logo svg{width:19px;height:19px}
+
+/* 客户详情：普通交易账户整块可点，直达账户详情 */
+.acct-block{cursor:pointer;border-radius:16px}
+.acct-block .sec-navrow{padding-bottom:12px}
+.acct-block .card{margin-top:0}
+.acct-block:active .card{background:#FBFBFD}
+.acct-block:focus-visible{outline:2px solid #C99A3F;outline-offset:2px}
+@media (hover:hover){
+  .acct-block:hover .card{background:#FDFDFE}
+}
+
+/* ---------- 产品详情：卡片内标题 / 排序 / 文档 ---------- */
+.pd-block{margin-top:16px}
+.pd-card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:18px 16px 4px;
+}
+.pd-card-head h3{margin:0;font-size:17px;font-weight:600;color:#15171A;letter-spacing:.2px}
+.pd-card-head + .kv{padding-top:0}
+.pd-card-head + .kv .row:first-child{padding-top:10px}
+.pd-card-head + .perf-head{margin-top:2px}
+.sort-btn{
+  display:inline-flex;align-items:center;gap:5px;background:none;border:0;
+  color:#C08E33;font-size:13.5px;padding:2px 0;letter-spacing:.2px;
+}
+.sort-btn svg{width:15px;height:15px;color:#C08E33}
+.rule-seg{border-bottom:0}
+.doc-row{font-family:inherit}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l7.5 4.3v9.4L12 21l-7.5-4.3V7.3L12 3z"/><path d="M12 8v8M8.6 10v4M15.4 10v4"/>
+      </svg>
+    </span>
+    <h1>新嘉通</h1>
+    <span class="chip">交互原型</span>
+  </div>
+  <div class="meta">
+    <span><b>21</b> 张截图 · <b>20</b> 个页面</span>
+    <button class="mapbtn" id="mapbtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      页面
+    </button>
+  </div>
+</header>
+
+<div class="stage">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <h2>页面地图</h2>
+      <p>点击任意条目直达对应页面</p>
+    </div>
+    <div id="sidelist"></div>
+    <div class="side-foot">
+      原型基于 21 张截图还原<br>
+      <b>灰色入口</b> = 截图未提供该页面
+    </div>
+  </aside>
+
+  <div class="device" id="device" data-theme="warm">
+    <div class="device-inner">
+      <div class="statusbar" id="statusbar">
+        <span id="clock">02:31</span>
+        <span class="stat-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="2.6" height="3.5" rx=".7"/><rect x="4.4" y="5.4" width="2.6" height="5.6" rx=".7"/><rect x="8.8" y="2.9" width="2.6" height="8.1" rx=".7"/><rect x="13.2" y="0" width="2.6" height="11" rx=".7"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.2c2.4 0 4.6.9 6.2 2.4l1.2-1.2C13.6 1.7 11 .7 8 .7S2.4 1.7.6 3.4l1.2 1.2C3.4 3.1 5.6 2.2 8 2.2z" opacity=".9"/><path d="M8 5.6c1.6 0 3.1.6 4.2 1.7l1.2-1.2C12 4.8 10.1 4.1 8 4.1s-4 .7-5.4 2l1.2 1.2C4.9 6.2 6.4 5.6 8 5.6z" opacity=".9"/><path d="M8 9c.8 0 1.6.3 2.2 1L8 12.2 5.8 10c.6-.7 1.4-1 2.2-1z"/></svg>
+          <svg width="23" height="12" viewBox="0 0 23 12" fill="none"><rect x=".6" y=".6" width="19" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".45"/><rect x="2.2" y="2.2" width="15.8" height="7.6" rx="1.8" fill="currentColor"/><path d="M21 4.2v3.6c1-.3 1.4-1 1.4-1.8s-.4-1.5-1.4-1.8z" fill="currentColor" fill-opacity=".45"/></svg>
+        </span>
+      </div>
+
+      <div class="screen" id="screen"></div>
+      <nav class="tabbar" id="tabbar"></nav>
+      <div class="scrim" id="scrim"></div>
+      <div class="sheet" id="sheet" aria-hidden="true"></div>
+      <div class="toast" id="toast"></div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+</div>
+
+<div class="hint">点击、滑动、返回 —— 都是真的</div>
+
+<script>
+/* ================= 新嘉通原型 · 静态数据（均来自截图） ================= */
+
+/* ---------- 图标 ---------- */
+const I = {
+  back: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.6L7.6 12 15 19.4"/></svg>`,
+  chev: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>`,
+  chevDown: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg>`,
+  chevUp: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 15l-7-7-7 7"/></svg>`,
+  caret: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`,
+  search: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.6" cy="10.6" r="6.2"/><path d="M15.2 15.2L20 20"/></svg>`,
+  sort: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4v15M7.5 19l-3.2-3.2M7.5 4l3.2 3.2"/><path d="M16.5 20V5M16.5 5l-3.2 3.2M16.5 20l3.2-3.2"/></svg>`,
+  filter: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 5.4h16.8l-6.6 7.6v6.1l-3.6 1.8v-7.9L3.6 5.4z"/></svg>`,
+  bell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.6a5.8 5.8 0 1111.6 0c0 3.8 1.3 5.1 1.9 5.7H4.3c.6-.6 1.9-1.9 1.9-5.7z"/><path d="M9.6 18.8a2.6 2.6 0 004.8 0"/></svg>`,
+  info: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v6"/><circle cx="12" cy="7.8" r="0.9" fill="currentColor" stroke="none"/></svg>`,
+  export: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4.5M12 4.5L8.4 8.1M12 4.5l3.6 3.6"/><path d="M4.6 15v4.6h14.8V15"/></svg>`,
+  bank: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 9.4L12 4l8.6 5.4"/><path d="M5.6 10.4v7.8M9.9 10.4v7.8M14.1 10.4v7.8M18.4 10.4v7.8"/><path d="M3.4 20.4h17.2"/></svg>`,
+  swap: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8.8h10.6l-3-3"/><path d="M17.5 15.2H6.9l3 3"/></svg>`,
+  wallet: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 8.2A2.7 2.7 0 016.1 5.5h11.8a2.7 2.7 0 012.7 2.7v8.6a2.7 2.7 0 01-2.7 2.7H6.1a2.7 2.7 0 01-2.7-2.7V8.2z"/><path d="M16.2 12.4h4.4M3.4 9.6h13.4"/></svg>`,
+  contact: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.4" y="3.8" width="17.2" height="16.4" rx="3.2"/><circle cx="12" cy="10.2" r="2.6"/><path d="M7.6 17.2c.6-2 2.3-3.2 4.4-3.2s3.8 1.2 4.4 3.2"/></svg>`,
+  chart: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="3.6" width="15.4" height="11.4" rx="2.2"/><path d="M2.8 19.2h11.6"/><circle cx="17.4" cy="16.6" r="3.4"/><path d="M19.9 19.1l2.1 2.1"/><path d="M6.4 11.6l2.6-2.9 2.2 1.9 3.2-4"/></svg>`,
+  pie: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11.4 3.3a8.9 8.9 0 108.9 8.9h-8.9V3.3z"/><path d="M14.6 3.9a8.9 8.9 0 015.1 5.1h-5.1V3.9z"/></svg>`,
+  coins: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11.6" cy="6.4" rx="6.8" ry="2.8"/><path d="M4.8 6.4v4.8c0 1.5 3 2.8 6.8 2.8s6.8-1.3 6.8-2.8V6.4"/><path d="M8.2 13.6v3.9c0 1.4 2.7 2.6 6.1 2.6 1.2 0 2.4-.2 3.3-.6"/><path d="M13.4 20.4c-2.4-.2-4.2-1.2-4.2-2.4v-3.9"/></svg>`,
+  card: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5.4" width="18.4" height="13.2" rx="2.6"/><path d="M2.8 10h18.4"/><path d="M6.2 15h3.4"/></svg>`,
+  doc: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 3.4h7l4.2 4.2v12.9a.5.5 0 01-.5.5H6.6a.5.5 0 01-.5-.5V3.9a.5.5 0 01.5-.5z"/><path d="M13.2 3.6v4.2h4.2"/><path d="M9.2 12.2h5.6M9.2 15.6h3.8"/></svg>`,
+  clipboard: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="4.6" width="14.8" height="16.2" rx="2.2"/><path d="M8.8 4.6V3.2h6.4v1.4"/><path d="M8.4 10.6h7.2M8.4 14.4h4.6"/></svg>`,
+  empty: `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 8.2l7.6-4 7.6 4v7.6l-7.6 4-7.6-4V8.2z"/><path d="M4.4 8.2L12 12l7.6-3.8M12 12v7.8"/></svg>`,
+
+  customer: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.3"/><path d="M2.7 19.6c0-3.3 2.8-5.3 6.3-5.3s6.3 2 6.3 5.3"/><circle cx="17.4" cy="9.3" r="2.4"/><path d="M16.3 14.5c3.1.1 5.2 1.9 5.2 4.7"/></svg>`,
+  product: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.4" y="3.4" width="7.1" height="7.1" rx="1.9"/><rect x="13.5" y="3.4" width="7.1" height="7.1" rx="1.9"/><rect x="3.4" y="13.5" width="7.1" height="7.1" rx="1.9"/><rect x="13.5" y="13.5" width="7.1" height="7.1" rx="1.9"/></svg>`,
+  workbench: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6l8.2 4.7v9.4L12 21.4l-8.2-4.7V7.3L12 2.6z"/><path d="M9 8.7l3 3.4 3-3.4M12 12.1v5"/></svg>`,
+  message: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.9" y="5.1" width="18.2" height="13.8" rx="2.5"/><path d="M3.6 7l8.4 5.9L20.4 7"/></svg>`,
+  mine: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.9 20c0-3.8 3.2-6 7.1-6s7.1 2.2 7.1 6"/></svg>`,
+
+  medal: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.8 3.2h8.4v6a4.2 4.2 0 01-8.4 0v-6z"/><path d="M7.8 5.3H5.4v1.9a2.7 2.7 0 002.4 2.7M16.2 5.3h2.4v1.9a2.7 2.7 0 01-2.4 2.7"/><path d="M12 13.4l1 1.9 2.1.3-1.5 1.5.4 2.1-2-1-2 1 .4-2.1-1.5-1.5 2.1-.3 1-1.9z"/></svg>`,
+  cashIn: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="6.2" width="18.4" height="11.6" rx="2.4"/><path d="M6.2 12h.02M17.8 12h.02"/><path d="M12 8.9v5.4M9.9 12.2L12 14.3l2.1-2.1"/></svg>`,
+  cashOut: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="6.2" width="18.4" height="11.6" rx="2.4"/><path d="M6.2 12h.02M17.8 12h.02"/><path d="M12 14.2V8.8M9.9 10.9L12 8.8l2.1 2.1"/></svg>`,
+  send: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.4" y="4.4" width="17.2" height="15.2" rx="2.4"/><path d="M7.4 9.4h9.2M7.4 12.8h9.2M7.4 16.2h4.8"/><path d="M15.4 15.3l1.7 1.7 3.1-3.3"/></svg>`,
+  booking: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="4.4" width="14.8" height="16.2" rx="2.2"/><path d="M8.6 4.4V2.9h6.8v1.5M8.6 9.2h6.8M8.6 12.6h4.2"/><circle cx="15.4" cy="16.4" r="3.8"/><path d="M15.4 14.7v1.9l1.3.8"/></svg>`
+
+};
+
+/* 首页功能格 */
+const CUSTOMER_ENTRIES = [
+  { label: '证券客户', icon: I.customer, nav: 'customer-list' },
+  { label: '全委客户', icon: I.customer },
+  { label: '保险客户', icon: I.contact },
+  { label: '证券-PI客户', icon: I.chart },
+  { label: '沉睡客户', icon: I.booking }
+];
+
+const WORK_ENTRIES = [
+  { label: '活动管理', icon: I.medal },
+  { label: '代客入金', icon: I.cashIn },
+  { label: '代客出金', icon: I.cashOut },
+  { label: '发送产品资料', icon: I.send },
+  { label: '代客申购预约', icon: I.booking }
+];
+
+/* ---------- 客户 ---------- */
+/* 列表用 listFields（截图里的 6 行），详情用 fields（截图里的完整字段） */
+const CUSTOMERS = [
+  {
+    id: 'c1', name: '杨**', tags: ['女', '证券客户'], phone: '+86*******6605',
+    full: true,
+    listFields: [
+      ['英文姓名', 'Y***********'], ['客户号', '81800446'], ['客户类型', '证券-普通账户'],
+      ['风险承受能力', 'R5进取型'], ['所属理财师', '赵永鹏'], ['服务代表', '熊姿']
+    ],
+    fields: [
+      ['英文名称', 'Y***********'], ['客户号', '81800446'], ['证件类型', '内地居民身份证'],
+      ['证件号码', '110105********2522'], ['生日', '1966-01-12'], ['Email', 'e****@jiayutong.net'],
+      ['风险承受能力', 'R5进取型'], ['PI认证', '是'], ['所属理财师', '赵永鹏'],
+      ['服务代表', '熊姿'], ['开户日期', '2021-10-22'], ['联系地址', '中国北京市海******'],
+      ['客户状态', '正常']
+    ],
+    acct: { no: '81800446', ccy: 'USD、HKD、CNY、EUR' }
+  },
+  {
+    id: 'c2', name: '赵**', tags: ['证券客户'], phone: '--',
+    full: false, type: '证券-普通账户',
+    listFields: [
+      ['英文姓名', '--'], ['客户号', 'TEST01'], ['客户类型', '证券-普通账户'],
+      ['风险承受能力', 'R5进取型'], ['所属理财师', '赵永鹏'], ['服务代表', '--']
+    ],
+    fields: [
+      ['英文姓名', '--'], ['客户号', 'TEST01'], ['客户类型', '证券-普通账户'],
+      ['风险承受能力', 'R5进取型'], ['所属理财师', '赵永鹏'], ['服务代表', '--']
+    ],
+    acct: null
+  }
+];
+
+/* ---------- 产品 ---------- */
+/* 只保留有完整详情截图的「泰康开泰」；其余三个产品只有列表卡、没有详情，已移除 */
+const PRODUCTS = [
+  {
+    id: 'p4', name: '泰康开泰基金-泰康开泰海外短期债券基金-A类美元累积份额', code: 'TKKT_USD_Bond_A',
+    ccy: 'USD', risk: 'R3中', st: '运行中', nav: '14.1170', y1: '5.25%', min: '5.00万', full: true
+  }
+];
+
+const PRODUCT_BASE = [
+  ['产品名称（英文）', 'Taikang Kaitai Funds -Taikang Kaitai Overseas Short Tenor Bond Fund -Class A -US'],
+  ['ISIN', 'TKKT_USD_Bond_A'],
+  ['产品类型', '公募基金'],
+  ['资产类型', '中国股票/股权'],
+  ['基金托管人', 'XXXXXX'],
+  ['基金管理人', 'HIS-BOCI'],
+  ['基金发行额度', '--'],
+  ['可用额度', '--'],
+  ['成立日期', '--'],
+  ['投资地区', '--'],
+  ['投资主题', '--'],
+  ['分红方式', '红利再投资'],
+  ['上下架状态', '已上架']
+];
+
+const PRODUCT_PERF = [
+  ['成立以来收益率', '+5.05%', 'red'],
+  ['近1月收益率', '0.00%', 'zero'],
+  ['近3月收益率', '0.00%', 'zero'],
+  ['近1年收益率', '+5.25%', 'red'],
+  ['近3年收益率', '0.00%', 'zero']
+];
+
+const HOLDERS = [
+  {
+    name: '岳***', no: '81800939', amt: '2,033,893.76', pnl: '+59,502.59',
+    navCost: ['14.1170', '13.4520'], shares: '144,074.0780', date: '2026/07/30'
+  },
+  {
+    name: '百***', no: '81801187', amt: '671,100.36', pnl: '+69,594.19',
+    navCost: ['14.1170', '12.8210'], shares: '47,538.4540', date: '2026/07/30'
+  },
+  {
+    name: '贾***', no: '81802287', amt: '307,968.52', pnl: '+37,311.05',
+    navCost: ['14.1170', '12.1547'], shares: '--', date: '--'
+  }
+];
+
+/* ---------- 账户 / 资产 ---------- */
+const ACCOUNT = {
+  id: 'a1', name: '普通交易账户（81800446）',
+  ccy: { flag: '🇭🇰', label: '港币' },
+  total: '-273,384.85', totalPnl: '0.00',
+  buyPower: '-273,384.85', marketValue: '0.00', pnlRatio: '0.00%',
+  available: '-273,384.85', frozen: '0.00', cumPnl: '+118,010.88',
+  holding: {
+    name: '国泰君安信用连接票据第2期', isin: 'ISINXS3019361768', code: 'GTJA_CLN_002',
+    ccy: 'USD', risk: 'R3中',
+    rows: [
+      ['金额', '0.00'], ['持仓盈亏/比%', '0.00<br>0.00%'], ['最新净值/成本', '11.9507<br>11.3853'],
+      ['可赎回份额', '3,102.9450'], ['持仓份额', '3,102.9450'], ['净值更新日期', '2026-06-15']
+    ]
+  }
+};
+
+const ASSET_DIST = [
+  { flag: '🇺🇸', name: '美元资产', ccy: 'USD', amt: '3,382,013,186.09' },
+  { flag: '🇭🇰', name: '港币资产', ccy: 'HKD', amt: '1,578,269,714.67' },
+  { flag: '🇨🇳', name: '人民币资产', ccy: 'CNY', amt: '146,439,088.00' },
+  { flag: '🇪🇺', name: '欧元资产', ccy: 'EUR', amt: '3,178,684.56' }
+];
+
+const CASH = [
+  { type: '基金赎回', date: '2026-09-07', name: '美元神鹿基金 - B类份额 - MAR 21', amt: '+4,995.00', ccy: 'USD' },
+  { type: '基金赎回', date: '2026-08-24', name: '美元神鹿基金 - B类份额 - MAR 21', amt: '+99,999.00', ccy: 'USD' },
+  { type: '入金', date: '2026-08-18', name: '', amt: '+12,500.00', ccy: 'USD' },
+  { type: '入金', date: '2026-08-18', name: '', amt: '+12,000.00', ccy: 'USD' },
+  { type: '入金', date: '2026-08-17', name: '', amt: '+10,006.00', ccy: 'HKD' },
+  { type: '入金', date: '2026-08-17', name: '', amt: '+10,008.00', ccy: 'HKD' },
+  { type: '入金', date: '2026-08-17', name: '', amt: '+5,000.00', ccy: 'HKD' }
+];
+
+const PNL_ITEMS = [
+  { name: '岚湖2号固定收益美元基金—A份额_Series031APR25', code: 'SL_FIX_SERII_A_APR25:FUND', amt: '+1,439.49', tags: ['基金', '持仓'], type: '基金' },
+  { name: '摩根士丹利 Riverview Omni 开曼离岸基金 G份额 -2025年5月开放 -（NE）01/05/2025', code: 'RIVERVOMNI_G_MAY25:FUND', amt: '+853.98', tags: ['基金', '持仓'], type: '基金' },
+  { name: '博枫基建收益基金_A类份额（累计份额）', code: 'BII_RAIF_A:FUND', amt: '0.00', tags: ['基金', '持仓'], type: '基金' },
+  { name: '合众全配置基金N-NZ类份额', code: 'TPF_USD_NZ:FUND', amt: '0.00', tags: ['基金', '持仓'], type: '基金' },
+  { name: '摩根士丹利 Riverview Omni 开曼离岸基金 G2份额 -2025年5月开放 -（NE）01/05/2025', code: 'RIVERVOMNI_G2_MAY25:FUND', amt: '0.00', tags: ['基金', '已清仓'], type: '基金' }
+];
+
+/* ---------- 银行卡 ---------- */
+const BANKS = [
+  {
+    id: 'b1', name: '美國銀行', acct: '美元账户', no: '458***', holder: 'D***',
+    loc: '其他境外银行', enName: '美國銀行', code: '055', swift: '055'
+  },
+  { id: 'b2', name: '中國銀行(香港)', acct: '美元账户', no: '123***', holder: '--', loc: '其他境外银行', enName: '中國銀行(香港)', code: '--', swift: '--' },
+  { id: 'b3', name: '中國銀行(香港)', acct: '人民币账户', no: '123***', holder: '--', loc: '其他境外银行', enName: '中國銀行(香港)', code: '--', swift: '--' },
+  { id: 'b4', name: '中國銀行(香港)', acct: '港币账户', no: '123***', holder: '--', loc: '其他境外银行', enName: '中國銀行(香港)', code: '--', swift: '--' }
+];
+
+/* ---------- 订单 ---------- */
+const ORDERS = [
+  { id: 'o1', type: '赎回', ptype: '基金', time: '2026-09-11 11:29:15', shares: '10.0000', status: '审核中' },
+  { id: 'o2', type: '赎回', ptype: '基金', time: '2026-09-11 11:23:24', shares: '10.0000', status: '审核中' },
+  { id: 'o3', type: '赎回', ptype: '基金', time: '2026-09-11 11:17:15', shares: '100.0000', status: '审核中' },
+  { id: 'o4', type: '赎回', ptype: '基金', time: '2026-09-11 11:12:08', shares: '100.0000', status: '审核中' }
+];
+
+const ORDER_DETAIL = {
+  id: 'captured', tag: '赎回', status: '成功',
+  pname: '美元神鹿基金 - B类份额 - MAR 21', shares: '5.0000',
+  rows: [
+    ['申请份额', '0.00 USD'], ['申请时间', '2026-09-07 09:57:08'], ['申购净值', '999'],
+    ['赎回费用', '0.00 USD'], ['确认时间', '2026-09-07 11:18:08'], ['交易账户', 'DZ51'],
+    ['交易类型', '赎回'], ['订单号', '202609070001'], ['备注说明', '--']
+  ]
+};
+
+/* ---------- 消息 ---------- */
+const MSGS = {
+  trade: {
+    title: '交易类消息',
+    groups: [{
+      date: '2026/08/26',
+      items: [
+        {
+          title: '客户（TEST01）赎回订单交收成功',
+          desc: '您的客户（TEST01）提交的赎回订单已成功交收。',
+          fields: [
+            ['产品代码', 'GAOTENG_USD_C'],
+            ['产品名称', '高腾微基金-高腾微金美元货币基金 C (美元)-累积'],
+            ['币种', 'USD'], ['提交赎回份额', '5,000'], ['实际交收金额', '1,000.00'],
+            ['提交时间', '2026-08-26 14:27:45'], ['完成时间', '2026-08-26 14:28:13']
+          ]
+        },
+        {
+          title: '客户（TEST01）赎回订单提交成功',
+          desc: '您的客户（TEST01）提交的赎回申请已成功提交。',
+          fields: [
+            ['产品代码', 'NEWHORIZON_B_MAR21'],
+            ['产品名称', '美元神鹿基金 - B类份额 - MAR 21'],
+            ['币种', 'USD'], ['赎回份额', '30'], ['提交时间', '2026-08-26 14:23:52']
+          ]
+        }
+      ]
+    }]
+  },
+  fund: {
+    title: '资金类消息',
+    groups: [{
+      date: '2026/08/17',
+      items: [
+        {
+          title: '客户谢佛荣（DZ51）成功入金',
+          desc: '您的客户谢佛荣（DZ51）提交的入金申请已处理完成。',
+          fields: [['币种', 'USD'], ['入金金额', '12,500.00'], ['完成时间', '2026-08-17 14:59:35']]
+        },
+        {
+          title: '客户谢佛荣（DZ51）提交入金申请',
+          desc: '您的客户谢佛荣（DZ51）提交的入金申请已收到，正在处理。',
+          fields: [['币种', 'USD'], ['入金金额', '12,500.00'], ['提交时间', '2026-08-17 14:55:10']]
+        },
+        {
+          title: '客户谢佛荣（DZ51）成功入金',
+          desc: '您的客户谢佛荣（DZ51）提交的入金申请已处理完成。',
+          fields: [['币种', 'USD'], ['入金金额', '12,000.00'], ['完成时间', '2026-08-17 14:22:33']]
+        }
+      ]
+    }]
+  },
+  account: {
+    title: '账户类消息',
+    groups: [
+      {
+        date: '2026/08/17',
+        items: [
+          {
+            title: '保险账户朱*俊（CS02028）今日过生日，请关注',
+            desc: '温馨提醒，您名下有客户今日过生日。',
+            fields: [['客户姓名', '朱*俊'], ['客户号', 'CS02028'], ['出生日期', '1986-08-17']]
+          },
+          {
+            title: '保险账户张*丽（CS00028）即将过生日，请关注',
+            desc: '温馨提醒，您名下有客户即将过生日。',
+            fields: [['客户姓名', '张*丽'], ['客户号', 'CS00028'], ['出生日期', '1990-08-24'], ['距离生日', '7天', 'warn']]
+          }
+        ]
+      },
+      {
+        date: '2026/08/16',
+        items: [
+          {
+            title: '证券普通交易账户朱泱夫（81801177）今日过生日，请关注',
+            desc: '温馨提醒，您名下有客户今日过生日。',
+            fields: [['客户姓名', '朱泱夫'], ['客户号', '81801177'], ['出生日期', '--']]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+const MSG_CATS = [
+  {
+    id: 'trade', title: '交易类消息', tone: 'blue', icon: I.swap, time: '2026/08/26 14:42:15', badge: '',
+    summary: '您的客户（TEST01）提交的赎回申请已成功交收。产品代码：GAOTENG_USD_C 产品名称：高腾微基金-高腾微金美元货币基金 C(美元)-累积 赎回份额：5,000 币种：USD 到账金额：1,000.00 交收时间：2026-08-26 14:28:13'
+  },
+  {
+    id: 'fund', title: '资金类消息', tone: 'gold', icon: I.wallet, time: '2026/08/17 15:00:00', badge: '31',
+    summary: '您的客户谢佛荣（DZ51）提交的入金申请已处理完成。币种：USD 入金金额：12,500.00 入金时间：2026-08-17 14:59:35'
+  },
+  {
+    id: 'account', title: '账户类消息', tone: 'purple', icon: I.contact, time: '2026/08/17 00:00:01', badge: '99+',
+    summary: '温馨提醒，您名下有客户今天过生日。客户姓名：朱*俊 客户号：CS02028 出生日期：1986-08-17'
+  }
+];
+
+const OVERVIEW = [
+  {
+    label: '近7天（2026年09月08日 - 2026年09月14日）',
+    rows: [
+      ['提交申购客户', '27人'], ['申购完成客户', '58人'], ['提交赎回客户', '18人'],
+      ['赎回完成客户', '19人'], ['提交出金客户', '12人'], ['出金成功客户', '10人'],
+      ['提交入金客户', '6人'], ['入金完成客户', '7人'], ['分红派息客户', '50人']
+    ]
+  },
+  { label: '未来7天（2026年09月15日 - 2026年09月21日）', rows: [['生日提前提醒客户', '15人']] },
+  { label: '今天（2026年09月14日）', rows: [['生日当天提醒客户', '13人']] }
+];
+
+/* ---------- 盈亏曲线 ---------- */
+const CHART = {
+  values: [-0.002, 0.004, 0.010, 0.012, 0.010, 0.020, -0.010, -0.028, -0.030, 0.010, 0.070, 0.100,
+    0.100, 0.100, 0.050, 0.005, 0.000, -0.015, -0.020, 0.040, 0.090, 0.130, 0.130, 0.050,
+    0.060, 0.120, 0.200, 0.240, 0.240, 0.080, 0.060],
+  marker: 11,
+  markerAmount: '+989.80',
+  grid: [0.24, 0.17, 0.11, 0.05, -0.02],
+  yMin: -0.05,
+  yMax: 0.29
+};
+
+</script>
+<script>
+/* ================= 新嘉通原型 · 交互逻辑 ================= */
+'use strict';
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+const screen = $('#screen');
+const tabbar = $('#tabbar');
+const device = $('#device');
+const scrim = $('#scrim');
+const sheet = $('#sheet');
+const toastEl = $('#toast');
+const sidebar = $('#sidebar');
+
+const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.6l4.6 4.6L19 7.4"/></svg>`;
+
+/* ---------------- 状态 ---------------- */
+const state = {
+  stack: [{ route: 'customer', params: {} }],
+  ui: {
+    overview: false,
+    products: { q: '', asset: '全部', risk: '全部', status: '全部' },
+    cash: { type: '全部', time: '全部' },
+    orders: { type: '全部', ptype: '全部', status: '全部', time: '全部' },
+    assets: { cat: '全部', ccy: 'USD', period: '本年' },
+    pd: { tab: 'sec-base', rule: '买入规则', range: '近6月', sort: '金额从高到低' },
+    customerQ: '',
+    productQ: ''
+  }
+};
+
+const PARENT = {
+  'customer-list': 'customer',
+  'customer-detail': 'customer-list',
+  'account-detail': 'customer-detail',
+  'assets': 'account-detail',
+  'asset-dist': 'account-detail',
+  'cash-flow': 'account-detail',
+  'bank-cards': 'account-detail',
+  'bank-card': 'bank-cards',
+  'fund-orders': 'account-detail',
+  'order-detail': 'fund-orders',
+  'msg-trade': 'messages',
+  'msg-fund': 'messages',
+  'msg-account': 'messages',
+  'product-list': 'product',
+  'product-detail': 'product-list'
+};
+
+const DEFAULTS = {
+  'customer-detail': { id: 'c1' },
+  'account-detail': {},
+  'product-detail': { id: 'p4' },
+  'bank-card': { id: 'b1' },
+  'order-detail': { id: 'captured' }
+};
+
+const ROOTS = ['customer', 'product', 'workbench', 'messages', 'mine'];
+
+/* ---------------- 通用片段 ---------------- */
+const navBar = (title) => `
+  <div class="navbar">
+    <button class="iconbtn" data-back aria-label="返回">${I.back}</button>
+    <h2>${title}</h2>
+  </div>`;
+
+const kvRow = (k, v, cls = '') => `<div class="row"><span class="k">${k}</span><span class="v ${cls}">${v}</span></div>`;
+
+const art = (glyph, cls = '') => `
+  <div class="art ${cls}">
+    <div class="orb"></div>
+    <div class="ring"></div>
+    <div class="glyph">${glyph}</div>
+  </div>`;
+
+const emptyState = (text = '暂无相关数据') => `<div class="empty">${I.empty}<div>${text}</div></div>`;
+
+const note = (text) => `<div class="proto-note">${text}</div>`;
+
+const fcard = (e) => {
+  const inner = `<span class="ic">${e.icon}</span><span class="label">${e.label}</span>`;
+  return e.nav
+    ? `<button class="fcard" data-nav="${e.nav}">${inner}</button>`
+    : `<div class="fcard off" aria-disabled="true" title="截图未提供该页面">${inner}</div>`;
+};
+
+const tag = (t, cls = '') => `<span class="tag ${cls}">${t}</span>`;
+
+/* ---------------- 首页 ---------------- */
+function viewCustomer() {
+  return `<div class="root">
+    <div class="root-head">
+      <h1>客户</h1>
+      <p class="greet">Hi，欢迎使用新嘉通 ~</p>
+      ${art(I.customer)}
+    </div>
+    <div class="body">
+      <div class="grid g3">${CUSTOMER_ENTRIES.map(fcard).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function viewProduct() {
+  return `<div class="root">
+    <div class="root-head">
+      <h1>产品</h1>
+      <p class="greet">Hi，欢迎使用新嘉通 ~</p>
+      ${art(I.product, 'big')}
+    </div>
+    <div class="body">
+      <div class="grid g3">
+        <button class="fcard" data-nav="product-list">
+          <span class="ic">${I.product}</span><span class="label">证券产品</span>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function viewWorkbench() {
+  return `<div class="root">
+    <div class="root-head"><h1>工作台</h1></div>
+    <div class="body">
+      <div class="wb-banner">
+        <h3>打造高效组织，从工作台开始<br>每一份专注，都在创造不凡</h3>
+        <div class="env">
+          <svg viewBox="0 0 120 100" fill="none">
+            <defs>
+              <linearGradient id="envGrad" x1="12" y1="24" x2="108" y2="92" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFD79E"/><stop offset="1" stop-color="#EC8A3C"/>
+              </linearGradient>
+            </defs>
+            <rect x="12" y="26" width="96" height="66" rx="10" fill="url(#envGrad)"/>
+            <path d="M12 33l48 32 48-32" stroke="#FFE9CB" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
+            <rect x="30" y="48" width="38" height="25" rx="4" fill="#FFF4E2" opacity=".95"/>
+            <path d="M37 56h24M37 63h16" stroke="#E79551" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="grid g3">${WORK_ENTRIES.map(fcard).join('')}</div>
+    </div>
+  </div>`;
+}
+
+function viewMessages() {
+  const open = state.ui.overview;
+  const groups = OVERVIEW.map(g => `
+    <div class="grouplbl">${g.label}</div>
+    ${g.rows.map(([label, cnt]) => `
+      <div class="ovrow off" aria-disabled="true" title="截图未提供该统计明细">
+        <span>${label}</span>
+        <span class="cnt"><b>${cnt}</b><span class="arrow">${I.chev}</span></span>
+      </div>`).join('')}`).join('');
+
+  return `<div class="root">
+    <div class="root-head">
+      <h1>消息中心</h1>
+      ${art(I.message, 'small')}
+    </div>
+    <div class="body">
+      <div class="msg-ov ${open ? '' : 'closed'}">
+        <div class="oh">
+          <span class="bell">${I.bell}</span><b>消息概览</b>
+          ${open ? '' : '<span class="none">暂无提醒</span>'}
+          <button class="tgl" data-act="overview" aria-label="展开/收起">${open ? I.chevUp : I.chevDown}</button>
+        </div>
+        <div class="body">${groups}</div>
+      </div>
+
+      ${MSG_CATS.map(c => `
+        <div class="msg-cat" data-nav="msg-${c.id}" style="margin-top:12px">
+          <span class="tile ${c.tone}">${c.icon}</span>
+          ${c.badge ? `<span class="badge">${c.badge}</span>` : ''}
+          <span class="body">
+            <span class="topline"><b>${c.title}</b><span>${c.time}</span></span>
+            <p>${c.summary}</p>
+          </span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function viewMine() {
+  return `<div class="root mine">
+    <div class="root-head"><h1>我的</h1></div>
+    <div class="body">
+      <div class="profile">
+        <span class="avatar">${I.mine}</span>
+        <div class="who"><b>admin</b><span>超级管理员</span></div>
+        <span class="chev">${I.chev}</span>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <button class="list-row" data-act="toast" data-msg="演示原型：截图未提供「检查更新」页面">
+          检查更新
+          <span class="right"><span class="gold">查看到新版本1.9.0</span>${I.chev}</span>
+        </button>
+        <button class="list-row" data-act="toast" data-msg="演示原型：截图未提供「退出登录」页面">
+          退出登录
+          <span class="right">${I.chev}</span>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- 客户 ---------------- */
+function cuCard(c) {
+  const rows = c.listFields || c.fields;
+  const search = [c.name, ...rows.map(f => f[1])].join(' ');
+  return `<div class="cu-card" data-nav="customer-detail" data-id="${c.id}" data-search="${search}">
+    <div class="name">${c.name}</div>
+    <div class="kv">${rows.map(([k, v]) => kvRow(k, v)).join('')}</div>
+  </div>`;
+}
+
+function viewCustomerList() {
+  return `${navBar('证券客户列表')}
+  <div class="searchbar">
+    <label class="search">${I.search}
+      <input id="cuSearch" placeholder="客户名称/客户号/服务代表" value="${state.ui.customerQ}">
+    </label>
+    <button class="btn-gold" data-act="searchCustomer">搜索</button>
+  </div>
+  <div class="toolrow">
+    <button class="tool off" aria-disabled="true" title="截图未提供排序面板">排序 ${I.sort}</button>
+    <button class="tool off" aria-disabled="true" title="截图未提供筛选面板">筛选 ${I.filter}</button>
+  </div>
+  <div class="page" style="padding-top:14px" id="cuList">
+    ${CUSTOMERS.map(cuCard).join('')}
+    <div class="empty" id="cuEmpty" hidden>${I.empty}<div>没有匹配的客户</div></div>
+  </div>`;
+}
+
+function viewCustomerDetail({ id } = {}) {
+  const c = CUSTOMERS.find(x => x.id === id) || CUSTOMERS[0];
+  return `${navBar('客户详情')}
+  <div class="page">
+    <div class="cust-hero">
+      <div>
+        <div class="nm">${c.name}</div>
+        ${c.phone !== '--' ? `<div class="ph">${c.phone}</div>` : ''}
+      </div>
+      <div class="tags">${c.tags.map(t => tag(t)).join('')}</div>
+    </div>
+
+    <div class="section-title">客户信息</div>
+    <div class="card kv">${c.fields.map(([k, v]) => kvRow(k, v)).join('')}</div>
+
+    ${c.acct ? `
+      <div class="acct-block" data-nav="account-detail" role="button" tabindex="0" aria-label="查看账户详情">
+        <div class="sec-navrow"><b>普通交易账户</b>${I.chev}</div>
+        <div class="card kv">
+          ${kvRow('交易账号', c.acct.no, 'num')}
+          ${kvRow('交易币种', c.acct.ccy)}
+        </div>
+      </div>` : `
+      <div class="sec-navrow off"><b>普通交易账户</b></div>
+      <div class="card pad muted small">截图未提供该客户的交易账户信息</div>
+      ${note('「杨**（81800446）」是完整示例客户，详情和账户都有截图；赵**（TEST01）只有列表字段。')}
+    `}
+  </div>`;
+}
+
+/* ---------------- 账户 ---------------- */
+function viewAccountDetail() {
+  const shortcuts = [
+    { label: '盈亏分析', icon: I.chart, nav: 'assets' },
+    { label: '资产分布', icon: I.pie, nav: 'asset-dist' },
+    { label: '资金明细', icon: I.coins, nav: 'cash-flow' },
+    { label: '银行卡信息', icon: I.card, nav: 'bank-cards' },
+    { label: '基金订单', icon: I.doc, nav: 'fund-orders' },
+    { label: '股票订单', icon: I.clipboard, off: true }
+  ];
+  const h = ACCOUNT.holding;
+
+  return `${navBar('账户详情')}
+  <div class="page">
+    <div class="acct-chip">${ACCOUNT.name}</div>
+
+    <div class="overview" style="margin-top:13px">
+      <div class="top">
+        <div>
+          <div class="l">总资产
+            <button class="cur-pill" data-act="toast" data-msg="演示原型：币种切换未提供截图">
+              <span class="flag">${ACCOUNT.ccy.flag}</span>${ACCOUNT.ccy.label}${I.caret}
+            </button>
+          </div>
+          <div class="big">${ACCOUNT.total}</div>
+        </div>
+        <div class="right-v">
+          <div class="lbl">总持仓盈亏</div>
+          <div class="val">${ACCOUNT.totalPnl}</div>
+        </div>
+      </div>
+      <div class="ov-grid">
+        <div><div class="lbl">总购买力</div><div class="val">${ACCOUNT.buyPower}</div></div>
+        <div><div class="lbl">总市值</div><div class="val">${ACCOUNT.marketValue}</div></div>
+        <div><div class="lbl">总持仓盈亏比%</div><div class="val">${ACCOUNT.pnlRatio}</div></div>
+        <div><div class="lbl">可用资金</div><div class="val">${ACCOUNT.available}</div></div>
+        <div><div class="lbl">冻结资金</div><div class="val">${ACCOUNT.frozen}</div></div>
+        <div><div class="lbl">累计盈亏</div><div class="val red">${ACCOUNT.cumPnl}</div></div>
+      </div>
+    </div>
+
+    <div class="shortcuts" style="margin-top:13px">
+      ${shortcuts.map(s => s.off
+        ? `<div class="shortcut off" aria-disabled="true" title="截图未提供该页面"><span>${s.icon}</span>${s.label}</div>`
+        : `<button class="shortcut" data-nav="${s.nav}"><span>${s.icon}</span>${s.label}</button>`).join('')}
+    </div>
+
+    <div class="seg" style="padding-left:0;padding-right:0;margin-top:18px">
+      <span class="sbtn on">基金</span>
+      <span class="sbtn off" aria-disabled="true" title="截图未提供股票持仓">股票</span>
+    </div>
+
+    <div class="hold-card" style="margin-top:10px">
+      <h4>${h.name}</h4>
+      <div class="code">${h.isin}</div>
+      <div class="tags">${tag(h.ccy)}${tag(h.risk)}</div>
+      <div class="hold-metrics">
+        ${h.rows.map(([k, v]) => `<div><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="end-note">已经到底了</div>
+  </div>`;
+}
+
+/* ---------------- 我的资产 ---------------- */
+function chartGeom() {
+  const W = 340, H = 216, L = 48, R = 332, T = 18, B = 172;
+  const n = CHART.values.length;
+  const pts = CHART.values.map((v, i) => ({
+    x: L + (R - L) * i / (n - 1),
+    y: T + (B - T) * (1 - (v - CHART.yMin) / (CHART.yMax - CHART.yMin))
+  }));
+  return { W, H, L, R, T, B, pts };
+}
+
+const CHART_DATES = (() => {
+  const iso = d => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  const out = [];
+  const jan1 = Date.UTC(2026, 0, 1);
+  for (let i = 0; i < 12; i++) out.push(iso(new Date(jan1 + Math.round(i * 10 / 11) * 86400000)));
+  const start = Date.UTC(2026, 0, 20), end = Date.UTC(2026, 8, 14);
+  for (let i = 0; i < 19; i++) out.push(iso(new Date(start + (end - start) * i / 18)));
+  return out;
+})();
+
+const chartAmount = (i) => {
+  if (i === CHART.marker) return '+989.80';
+  const a = CHART.values[i] * 10000;
+  return `${a >= 0 ? '+' : '-'}${Math.abs(a).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
+const chartWan = (v) => `${v >= 0 ? '' : '-'}${Math.abs(v).toFixed(2)}万`;
+
+function smoothPath(pts) {
+  let d = `M${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C${c1x.toFixed(2)} ${c1y.toFixed(2)} ${c2x.toFixed(2)} ${c2y.toFixed(2)} ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  }
+  return d;
+}
+
+function chartSvg() {
+  const { W, H, L, R, T, B, pts } = chartGeom();
+  const marker = pts[CHART.marker];
+  const yOf = v => T + (B - T) * (1 - (v - CHART.yMin) / (CHART.yMax - CHART.yMin));
+
+  const grid = CHART.grid.map(v => {
+    const y = yOf(v);
+    return `<line x1="${L}" y1="${y.toFixed(1)}" x2="${R}" y2="${y.toFixed(1)}" stroke="#DFDFE5" stroke-width="1" stroke-dasharray="3 4"/>
+      <text x="${L - 8}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#A9A9AF">${chartWan(v)}</text>`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="盈亏趋势图">
+    ${grid}
+    <line id="cv" x1="${marker.x}" y1="${T}" x2="${marker.x}" y2="${B}" stroke="#BDBDC5" stroke-width="1" stroke-dasharray="3 4"/>
+    <line id="ch" x1="${L}" y1="${marker.y}" x2="${marker.x}" y2="${marker.y}" stroke="#BDBDC5" stroke-width="1" stroke-dasharray="3 4"/>
+    <path d="${smoothPath(pts)}" fill="none" stroke="#4C74C9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle id="cd" cx="${marker.x}" cy="${marker.y}" r="4.6" fill="#4C74C9" stroke="#fff" stroke-width="2.4"/>
+    <text x="${L}" y="${H - 8}" font-size="10.5" fill="#A9A9AF">2026-01-01</text>
+    <text x="${R}" y="${H - 8}" text-anchor="end" font-size="10.5" fill="#A9A9AF">2026-09-14</text>
+  </svg>`;
+}
+
+const ASSET_TABS = ['全部', '基金', '股票', '其他'];
+
+function viewAssets() {
+  const ui = state.ui.assets;
+  const catOk = ui.cat === '全部' || ui.cat === '基金';
+  const items = catOk ? PNL_ITEMS : [];
+  const rangeText = {
+    '本年': '2026/01/01-2026/09/14',
+    '本月': '2026/09/01-2026/09/14',
+    '近3个月': '2026/06/14-2026/09/14',
+    '近1年': '2025/09/14-2026/09/14',
+    '全部': '2025/01/01-2026/09/14'
+  }[ui.period] || '2026/01/01-2026/09/14';
+
+  return `${navBar('我的资产')}
+  <div class="page">
+    <div class="acct-chip">普通交易账户（DZ51）</div>
+    <div class="section-title">盈亏分析</div>
+
+    <div class="asset-tabs">
+      ${ASSET_TABS.map(t => `<button class="atab ${t === ui.cat ? 'on' : ''}"
+        data-act="chip" data-path="assets.cat" data-value="${t}">${t}</button>`).join('')}
+    </div>
+
+    <div class="pnl-card" style="margin-top:12px">
+      <div class="pnl-head">
+        <div class="l">区间盈亏
+          <button class="cur-pill" data-act="sheet" data-sheet="assetCcy">
+            <span class="flag">${ui.ccy === 'USD' ? '🇺🇸' : ui.ccy === 'HKD' ? '🇭🇰' : '🇨🇳'}</span>${ui.ccy}${I.caret}
+          </button>
+          <span class="info-i">${I.info}</span>
+        </div>
+        <div class="r">
+          <span class="info-i">${I.info}</span>
+          <button class="cur-pill" style="border:0;padding:0 4px;background:none" data-act="sheet" data-sheet="assetPeriod">${ui.period}${I.caret}</button>
+        </div>
+      </div>
+      <div class="pnl-amount">${catOk ? '+458.39' : '0.00'}</div>
+      <div class="pnl-range">统计区间：${rangeText}</div>
+    </div>
+
+    ${catOk ? `
+      <div class="chart-card" style="margin-top:12px">
+        <h4>盈亏趋势</h4>
+        <div class="chart-wrap" id="chartWrap">
+          <div class="plot" style="position:relative">
+            ${chartSvg()}
+            <div class="chart-tip" id="chartTip">${CHART_DATES[CHART.marker]}<b>${CHART.markerAmount}</b></div>
+            <div class="chart-axis-pill y" id="pillY">${chartWan(CHART.values[CHART.marker])}</div>
+            <div class="chart-axis-pill x" id="pillX">${CHART_DATES[CHART.marker]}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="detail-head">
+          <b>盈亏明细</b><span>更新至：2026-01-25</span>
+        </div>
+        <div class="card">
+          ${items.map(it => `
+            <div class="pnl-item">
+              <div class="line1">
+                <h5>${it.name}</h5>
+                <span class="amt ${it.amt === '0.00' ? 'zero' : ''}">${it.amt}</span>
+              </div>
+              <div class="code">${it.code}</div>
+              <div class="tags">${it.tags.map(t => tag(t, t === '持仓' ? 'blue' : '')).join('')}</div>
+            </div>`).join('')}
+        </div>
+        <button class="more-link" data-act="more">查看更多</button>
+      </div>` : `<div class="card" style="margin-top:12px">${emptyState(`暂无${ui.cat}类盈亏数据`)}</div>`}
+  </div>`;
+}
+
+function viewAssetDist() {
+  return `${navBar('资产分布')}
+  <div class="page">
+    ${ASSET_DIST.map(a => `
+      <div class="cur-card" style="margin-bottom:12px">
+        <div class="head"><span class="flag">${a.flag}</span>${a.name}（${a.ccy}）</div>
+        <div class="lbl">可用资金</div>
+        <div class="num">${a.amt}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function viewCashFlow() {
+  const ui = state.ui.cash;
+  const list = CASH.filter(c => ui.type === '全部' || c.type === ui.type);
+  return `${navBar('资金明细')}
+  <div class="filterbar" style="padding-top:6px">
+    <button class="fbtn" data-act="sheet" data-sheet="cashType">
+      ${ui.type === '全部' ? '业务类型' : ui.type}${I.caret}
+    </button>
+    <button class="fbtn" data-act="sheet" data-sheet="cashTime">
+      ${ui.time === '全部' ? '筛选时间' : ui.time}${I.caret}
+    </button>
+  </div>
+  <div class="page" style="padding-top:13px">
+    ${list.length ? `<div class="card">${list.map(c => `
+      <div class="cash-row">
+        <div class="l"><b>${c.type}</b><span>${c.date}</span>${c.name ? `<span class="name">${c.name}</span>` : ''}</div>
+        <div class="r">${c.amt} ${c.ccy}</div>
+      </div>`).join('')}</div>` : `<div class="card">${emptyState('暂无相关记录')}</div>`}
+  </div>`;
+}
+
+function viewBankCards() {
+  return `${navBar('银行卡信息')}
+  <div class="page">
+    ${BANKS.map(b => `
+      <div class="bank-card" style="margin-bottom:12px" data-nav="bank-card" data-id="${b.id}">
+        <div class="top">
+          <span class="bank-logo">${I.bank}</span>
+          <div>
+            <div class="bname">${b.name}</div>
+            <div class="acct">${b.acct}</div>
+          </div>
+          <span class="status">认证成功</span>
+        </div>
+        <div class="no">${b.no}</div>
+        <span class="chev">${I.chev}</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function viewBankCard({ id } = {}) {
+  const b = BANKS.find(x => x.id === id) || BANKS[0];
+  return `${navBar('银行卡详情')}
+  <div class="page">
+    <div class="bank-card bank-hero">
+      <div class="top" style="display:flex;align-items:center;gap:10px">
+        <span class="bank-logo">${I.bank}</span>
+        <div class="bname" style="font-size:16px;font-weight:600">${b.name}</div>
+        <span class="status" style="margin-left:auto;color:#8B8B91;font-size:13px">认证成功</span>
+      </div>
+      <div class="no">${b.no}</div>
+    </div>
+    <div class="card kv" style="margin-top:13px">
+      ${kvRow('银行户名', b.holder)}
+      ${kvRow('银行卡所在地', b.loc)}
+      ${kvRow('银行卡英文名称', b.enName)}
+      ${kvRow('银行代码', b.code)}
+      ${kvRow('账户类型', b.acct)}
+      ${kvRow('SWIFT code', b.swift)}
+    </div>
+    ${b.id !== 'b1' ? note('截图仅提供「美國銀行 458***」的银行卡详情，其余卡按列表字段还原。') : ''}
+  </div>`;
+}
+
+/* ---------------- 订单 ---------------- */
+function viewFundOrders() {
+  const ui = state.ui.orders;
+  const shown = ORDERS.filter(o =>
+    (ui.type === '全部' || o.type === ui.type) &&
+    (ui.ptype === '全部' || o.ptype === ui.ptype) &&
+    (ui.status === '全部' || o.status === ui.status)
+  );
+  const chips = [
+    ['交易类型', 'orderType', ui.type],
+    ['产品类型', 'orderPType', ui.ptype],
+    ['订单状态', 'orderStatus', ui.status],
+    ['筛选时间', 'orderTime', ui.time]
+  ];
+
+  return `${navBar('基金订单')}
+  <div class="chiprow" style="padding-top:8px">
+    ${chips.map(([label, sheetKey, val]) => `
+      <button class="chip ${val !== '全部' ? 'on' : ''}" data-act="sheet" data-sheet="${sheetKey}">
+        ${label}${I.caret}
+      </button>`).join('')}
+  </div>
+  <div class="page" style="padding-top:2px">
+    <div class="order-day">2026年09月11日 <span class="q">?</span></div>
+    ${shown.length ? `<div class="card">${shown.map(o => `
+      <div class="order-item" data-nav="order-detail" data-id="${o.id}">
+        <div class="otitle">赎回</div>
+        <div class="pname">美元神鹿基金 - B类份额 - MAR 21</div>
+        <div class="tags">${tag('USD')}${tag('R4中高')}</div>
+        <div class="bot">
+          <span class="time">${o.time}</span>
+          <span class="shares">${o.shares}<small>份</small></span>
+        </div>
+        <div class="state">${o.status}</div>
+      </div>`).join('')}</div>` : `<div class="card">${emptyState('暂无相关订单')}</div>`}
+  </div>`;
+}
+
+function viewOrderDetail({ id } = {}) {
+  let d;
+  if (!id || id === 'captured') {
+    d = {
+      tag: ORDER_DETAIL.tag, status: ORDER_DETAIL.status, pname: ORDER_DETAIL.pname,
+      shares: ORDER_DETAIL.shares, rows: ORDER_DETAIL.rows
+    };
+  } else {
+    const o = ORDERS.find(x => x.id === id) || ORDERS[0];
+    d = {
+      tag: '赎回', status: o.status, pname: '美元神鹿基金 - B类份额 - MAR 21', shares: o.shares,
+      rows: [
+        ['申请份额', '--'], ['申请时间', o.time], ['申购净值', '--'],
+        ['赎回费用', '--'], ['确认时间', '--'], ['交易账户', 'DZ51'],
+        ['交易类型', '赎回'], ['订单号', '--'], ['备注说明', '--']
+      ]
+    };
+  }
+
+  return `${navBar('订单详情')}
+  <div class="page">
+    <div class="ord-hero">
+      <div class="tagline"><span class="t">${d.tag}</span><span class="s">${d.status}</span></div>
+      <div class="pname">${d.pname}</div>
+      <div class="num">${d.shares} 份</div>
+    </div>
+    <div class="card kv" style="margin-top:13px">
+      ${d.rows.map(([k, v]) => kvRow(k, v, /^\d/.test(v) ? 'num' : '')).join('')}
+    </div>
+    ${!id || id === 'captured' ? '' : note('截图只提供了「5.0000 份 · 成功」这一笔订单的详情，其余订单仅还原已展示字段。')}
+  </div>`;
+}
+
+/* ---------------- 消息 ---------------- */
+function viewMsgList(kind) {
+  const data = MSGS[kind];
+  return `${navBar(data.title)}
+  <div class="page" style="padding-top:2px">
+    ${data.groups.map(g => `
+      <div class="msg-day">${g.date}</div>
+      ${g.items.map(it => `
+        <div class="msg-card" style="margin-bottom:12px">
+          <h4>${it.title}</h4>
+          <p class="desc">${it.desc}</p>
+          <div class="fields">
+            ${it.fields.map(([k, v, cls]) => `<div class="row"><span class="k">${k}</span><span class="v ${cls || ''}">${v}</span></div>`).join('')}
+          </div>
+        </div>`).join('')}`).join('')}
+  </div>`;
+}
+
+/* ---------------- 产品 ---------------- */
+function productCard(p) {
+  const search = [p.name, p.code, p.ccy, p.risk, p.st].join(' ');
+  return `<div class="pcard" style="margin-bottom:13px" data-nav="product-detail" data-id="${p.id}" data-pcard data-search="${search}">
+    <div class="pline">
+      <h4>${p.name}</h4>
+    </div>
+    <div class="coderow">
+      <span class="code">${p.code}</span>
+      <div class="tags">${tag(p.ccy)}${tag(p.risk)}${tag(p.st)}</div>
+    </div>
+    <div class="pmetrics">
+      <div><div class="v">${p.nav}</div><div class="k">最新净值</div></div>
+      <div class="c"><div class="v">${p.y1}</div><div class="k">近1年收益率</div></div>
+      <div class="r"><div class="v">${p.min}</div><div class="k">起购金额</div></div>
+    </div>
+  </div>`;
+}
+
+function viewProductList() {
+  const ui = state.ui.products;
+  const list = PRODUCTS.filter(p =>
+    (ui.asset === '全部' || p.ccy === ui.asset) &&
+    (ui.risk === '全部' || p.risk === ui.risk) &&
+    (ui.status === '全部' || p.st === ui.status)
+  );
+
+  return `${navBar('证券产品列表')}
+  <div class="searchbar">
+    <label class="search">${I.search}
+      <input id="pSearch" placeholder="搜索产品名称/产品编号" value="${ui.q}">
+    </label>
+    <button class="btn-gold" data-act="searchProduct">搜索</button>
+  </div>
+  <div class="chiprow" style="padding-top:8px">
+    <button class="chip ${ui.asset !== '全部' ? 'on' : ''}" data-act="sheet" data-sheet="pAsset">资产类型${I.caret}</button>
+    <button class="chip ${ui.risk !== '全部' ? 'on' : ''}" data-act="sheet" data-sheet="pRisk">风险等级${I.caret}</button>
+    <button class="chip ${ui.status !== '全部' ? 'on' : ''}" data-act="sheet" data-sheet="pStatus">产品状态${I.caret}</button>
+    <button class="chip more off" aria-disabled="true" title="截图未提供更多筛选面板">更多 ${I.filter}</button>
+  </div>
+  <div class="page" style="padding-top:14px">
+    ${list.map(productCard).join('')}
+    <div class="empty" id="pEmpty" hidden>${I.empty}<div>没有匹配的产品</div></div>
+  </div>`;
+}
+
+const PD_TABS = [
+  ['sec-base', '产品基本资料'],
+  ['sec-nav', '业绩走势'],
+  ['sec-rule', '交易规则'],
+  ['sec-doc', '文档资料'],
+  ['sec-holder', '持有客户']
+];
+
+function viewProductDetail({ id } = {}) {
+  const p = PRODUCTS.find(x => x.id === id) || PRODUCTS[0];
+  const ui = state.ui.pd;
+
+  const rangeTabs = ['近6月', '近1年', '近3年', '今年以来', '成立以来'];
+  const sortDesc = ui.sort !== '金额从低到高';
+  const holders = [...HOLDERS].sort((a, b) => {
+    const av = Number(a.amt.replace(/,/g, ''));
+    const bv = Number(b.amt.replace(/,/g, ''));
+    return sortDesc ? bv - av : av - bv;
+  });
+
+  const buyBody = `<div class="rule-body">
+    <div class="steps">
+      <div class="step"><div class="v">--</div><div class="dot"></div><div class="k">下单</div></div>
+      <div class="step"><div class="v">--</div><div class="dot"></div><div class="k">确认份额</div></div>
+      <div class="step"><div class="v">--</div><div class="dot"></div><div class="k">查看盈亏</div></div>
+    </div>
+    <div class="notice">当前日期已过申购开放期，暂无法进行认购</div>
+    <div class="kv compact" style="padding:0;margin-top:10px">
+      ${kvRow('最低认购额(首次)', '5.00万起购，叠加1.00万起')}
+      ${kvRow('最低认购额(非首次)', '1.00万起购，叠加1.00万起')}
+    </div>
+  </div>`;
+
+  const sellBody = `<div class="rule-body">
+    <div class="empty" style="padding:38px 0 34px">${I.empty}<div>赎回规则内容未提供截图</div></div>
+  </div>`;
+
+  return `${navBar('产品详情')}
+  <div class="pd-tabs">
+    ${PD_TABS.map(([t, label]) => `<button class="pd-tab ${ui.tab === t ? 'on' : ''}" data-act="pdtab" data-target="${t}">${label}</button>`).join('')}
+  </div>
+  <div class="page">
+    <div class="pd-hero" id="sec-hero">
+      <h3>${p.name}</h3>
+      <div class="coderow" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px">
+        <span class="code" style="margin-top:0">${p.code}</span>
+        <div class="tags" style="margin-top:0">${tag(p.ccy)}${tag(p.risk)}${tag(p.st)}</div>
+      </div>
+      <div class="metrics">
+        <div><div class="v">${p.nav}</div><div class="k">最新净值</div></div>
+        <div><div class="v red">${p.y1}</div><div class="k">近1年收益率</div></div>
+        <div class="r"><div class="v">${p.min}</div><div class="k">起购金额</div></div>
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-base" data-pdsec>
+      <div class="card">
+        <div class="pd-card-head"><h3>产品基本资料</h3></div>
+        <div class="kv">${PRODUCT_BASE.map(([k, v]) => kvRow(k, v)).join('')}</div>
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-nav" data-pdsec>
+      <div class="card">
+        <div class="pd-card-head">
+          <h3>单位净值走势</h3>
+          <button class="export" data-act="toast" data-msg="暂无净值数据，暂不可导出">${I.export}导出</button>
+        </div>
+        <div class="chart-empty">暂无净值数据</div>
+        <div class="range-tabs" style="margin:0 16px 16px">
+          ${rangeTabs.map(r => `<button class="range-tab ${ui.range === r ? 'on' : ''}" data-act="chip" data-path="pd.range" data-value="${r}">${r}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-perf">
+      <div class="card">
+        <div class="pd-card-head"><h3>历史业绩</h3></div>
+        <div class="perf-head"><span>时间区间</span><span>涨跌幅</span></div>
+        ${PRODUCT_PERF.map(([k, v, cls]) => `<div class="perf-row"><span>${k}</span><span class="p ${cls === 'zero' ? 'zero' : ''}">${v}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-rule" data-pdsec>
+      <div class="card">
+        <div class="rule-seg">
+          <button class="${ui.rule === '买入规则' ? 'on' : ''}" data-act="rule" data-value="买入规则">买入规则</button>
+          <button class="${ui.rule === '赎回规则' ? 'on' : ''}" data-act="rule" data-value="赎回规则">赎回规则</button>
+        </div>
+        ${ui.rule === '赎回规则' ? sellBody : buyBody}
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="pd-card-head"><h3>产品费用规则</h3></div>
+        ${[['管理费率', '1'], ['托管费率', '1'], ['业绩表现费', '0'], ['申购费率', '1.00%']].map(([k, v]) => `<div class="fee-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-doc" data-pdsec>
+      <div class="card">
+        <div class="pd-card-head"><h3>文档资料</h3></div>
+        <button class="doc-row" data-act="toast" data-msg="文档预览未接入（截图未提供内容）">销售政策<span class="chev">${I.chev}</span></button>
+        <button class="doc-row" data-act="toast" data-msg="文档预览未接入（截图未提供内容）">产品文档<span class="chev">${I.chev}</span></button>
+      </div>
+    </div>
+
+    <div class="pd-block" id="sec-holder" data-pdsec>
+      <div class="sec-head-row">
+        <h3>持有客户</h3>
+        <button class="sort-btn" data-act="sheet" data-sheet="pdSort">排序 ${I.sort}</button>
+      </div>
+      <div class="holder-note">注：最新数据大约有30分钟延迟</div>
+      <div class="card">
+        ${holders.map(h => `
+          <div class="holder">
+            <div class="top">
+              <div><div class="nm">${h.name}</div><div class="id">${h.no}</div></div>
+              ${tag('USD')}
+            </div>
+            <div class="metrics">
+              <div><div class="lbl">金额</div><div class="val">${h.amt}</div></div>
+              <div><div class="lbl">持仓盈亏</div><div class="val red">${h.pnl}</div></div>
+              <div><div class="lbl">最新净值/成本</div><div class="val">${h.navCost[0]}<br>${h.navCost[1]}</div></div>
+              <div><div class="lbl">持仓份额</div><div class="val">${h.shares}</div></div>
+              <div><div class="lbl">净值更新日期</div><div class="val">${h.date}</div></div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- 路由表 ---------------- */
+const VIEWS = {
+  'customer': viewCustomer,
+  'product': viewProduct,
+  'workbench': viewWorkbench,
+  'messages': viewMessages,
+  'mine': viewMine,
+  'customer-list': viewCustomerList,
+  'customer-detail': viewCustomerDetail,
+  'account-detail': viewAccountDetail,
+  'assets': viewAssets,
+  'asset-dist': viewAssetDist,
+  'cash-flow': viewCashFlow,
+  'bank-cards': viewBankCards,
+  'bank-card': viewBankCard,
+  'fund-orders': viewFundOrders,
+  'order-detail': viewOrderDetail,
+  'msg-trade': () => viewMsgList('trade'),
+  'msg-fund': () => viewMsgList('fund'),
+  'msg-account': () => viewMsgList('account'),
+  'product-list': viewProductList,
+  'product-detail': viewProductDetail
+};
+
+const TABS = [
+  { id: 'customer', label: '客户', icon: I.customer },
+  { id: 'product', label: '产品', icon: I.product },
+  { id: 'workbench', label: '工作台', icon: I.workbench },
+  { id: 'messages', label: '消息', icon: I.message, badge: '99+' },
+  { id: 'mine', label: '我的', icon: I.mine }
+];
+
+/* ---------------- 渲染 ---------------- */
+function renderTabs(active) {
+  tabbar.innerHTML = TABS.map(t => `
+    <button class="tabitem ${t.id === active ? 'active' : ''}" data-tab="${t.id}">
+      ${t.icon}<span>${t.label}</span>
+      ${t.badge ? `<span class="badge">${t.badge}</span>` : ''}
+    </button>`).join('');
+}
+
+function render() {
+  const cur = state.stack[state.stack.length - 1];
+  const view = VIEWS[cur.route] || viewCustomer;
+  screen.innerHTML = view(cur.params || {});
+  screen.scrollTop = 0;
+
+  const root = ROOTS.includes(cur.route);
+  screen.dataset.route = cur.route;
+  tabbar.classList.toggle('hidden', !root);
+  device.dataset.theme = root ? 'warm' : 'plain';
+  renderTabs(root ? cur.route : null);
+  renderMap();
+  syncFab(cur.route);
+  afterRender(cur);
+}
+
+function afterRender(cur) {
+  if (cur.route === 'assets') initChart();
+  if (cur.route === 'customer-list') {
+    bindSearch('cuSearch');
+    filterCustomers();
+  }
+  if (cur.route === 'product-list') {
+    bindSearch('pSearch');
+    filterProducts();
+  }
+  if (cur.route === 'product-detail') {
+    // tab 高亮已在 HTML 中根据 ui.tab 生成，滚动由 spy 更新
+  }
+}
+
+function rerender(keepScroll = true) {
+  const y = screen.scrollTop;
+  render();
+  if (keepScroll) screen.scrollTop = y;
+  const cur = state.stack[state.stack.length - 1];
+  if (cur && cur.route === 'product-detail') spyPd();
+}
+
+/* ---------------- 导航 ---------------- */
+function go(route, params) {
+  if (ROOTS.includes(route)) {
+    state.stack = [{ route, params: params || {} }];
+  } else {
+    state.stack.push({ route, params: params || {} });
+  }
+  render();
+}
+
+function back() {
+  if (state.stack.length > 1) {
+    state.stack.pop();
+    render();
+  }
+}
+
+function buildTrail(route, params) {
+  const chain = [];
+  let r = route;
+  let p = params || DEFAULTS[route] || {};
+  while (r) {
+    chain.unshift({ route: r, params: p });
+    const parent = PARENT[r];
+    if (!parent) break;
+    r = parent;
+    p = DEFAULTS[r] || {};
+  }
+  return chain;
+}
+
+function jump(route) {
+  state.stack = buildTrail(route);
+  render();
+  sidebar.classList.remove('open');
+  scrim.classList.remove('show');
+}
+
+/* ---------------- 搜索 / 筛选 ---------------- */
+function bindSearch(id) {
+  const input = document.getElementById(id);
+  if (!input) return;
+  input.addEventListener('input', () => {
+    if (id === 'cuSearch') {
+      state.ui.customerQ = input.value;
+      filterCustomers();
+    } else {
+      state.ui.products.q = input.value;
+      filterProducts();
+    }
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      id === 'cuSearch' ? filterCustomers() : filterProducts();
+      input.blur();
+    }
+  });
+}
+
+function filterCustomers() {
+  const q = (state.ui.customerQ || '').trim().toLowerCase();
+  let shown = 0;
+  $$('#cuList .cu-card').forEach(el => {
+    const hit = !q || (el.dataset.search || '').toLowerCase().includes(q);
+    el.style.display = hit ? '' : 'none';
+    if (hit) shown++;
+  });
+  const empty = $('#cuEmpty');
+  if (empty) empty.hidden = shown > 0;
+}
+
+function filterProducts() {
+  const q = (state.ui.products.q || '').trim().toLowerCase();
+  let shown = 0;
+  $$('[data-pcard]').forEach(el => {
+    const hit = !q || (el.dataset.search || '').toLowerCase().includes(q);
+    el.style.display = hit ? '' : 'none';
+    if (hit) shown++;
+  });
+  const empty = $('#pEmpty');
+  if (empty) empty.hidden = shown > 0;
+}
+
+/* ---------------- 弹层 ---------------- */
+const SHEETS = {
+  cashType: { title: '业务类型', path: 'cash.type', options: ['全部', '入金', '出金', '基金申购', '基金赎回'] },
+  cashTime: { title: '筛选时间', path: 'cash.time', options: ['全部', '近1个月', '近3个月', '近1年'] },
+  orderType: { title: '交易类型', path: 'orders.type', options: ['全部', '申购', '赎回'] },
+  orderPType: { title: '产品类型', path: 'orders.ptype', options: ['全部', '基金', '股票'] },
+  orderStatus: { title: '订单状态', path: 'orders.status', options: ['全部', '审核中', '成功', '失败'] },
+  orderTime: { title: '筛选时间', path: 'orders.time', options: ['全部', '近1个月', '近3个月', '近1年'] },
+  assetCcy: { title: '币种', path: 'assets.ccy', options: ['USD', 'HKD', 'CNY'] },
+  assetPeriod: { title: '统计区间', path: 'assets.period', options: ['本月', '近3个月', '本年', '近1年', '全部'] },
+  pAsset: { title: '资产类型', path: 'products.asset', options: ['全部', 'USD', 'HKD', 'CNY'] },
+  pRisk: { title: '风险等级', path: 'products.risk', options: ['全部', 'R1低', 'R2中低', 'R3中', 'R4中高', 'R5高'] },
+  pStatus: { title: '产品状态', path: 'products.status', options: ['全部', '运行中', '仅申购', '仅赎回'] },
+  pdSort: { title: '排序方式', path: 'pd.sort', options: ['金额从高到低', '金额从低到高'] }
+};
+
+function getPath(path) {
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), state.ui);
+}
+
+function setPath(path, value, keepScroll = true) {
+  const segs = path.split('.');
+  let o = state.ui;
+  for (let i = 0; i < segs.length - 1; i++) o = o[segs[i]];
+  o[segs[segs.length - 1]] = value;
+  rerender(keepScroll);
+}
+
+let sheetKey = null;
+
+function openSheet(key) {
+  const cfg = SHEETS[key];
+  if (!cfg) return;
+  sheetKey = key;
+  const cur = getPath(cfg.path);
+  sheet.innerHTML = `
+    <div class="sh"><b>${cfg.title}</b><button data-close>完成</button></div>
+    <div class="opts">
+      ${cfg.options.map(o => `
+        <button class="opt ${o === cur ? 'on' : ''}" data-pick="${o}">${o}${o === cur ? CHECK : ''}</button>`).join('')}
+    </div>`;
+  sheet.classList.add('show');
+  sheet.setAttribute('aria-hidden', 'false');
+  scrim.classList.add('show');
+}
+
+function closeSheet() {
+  sheet.classList.remove('show');
+  sheet.setAttribute('aria-hidden', 'true');
+  scrim.classList.remove('show');
+  sheetKey = null;
+}
+
+sheet.addEventListener('click', (e) => {
+  if (e.target.closest('[data-close]')) { closeSheet(); return; }
+  const pick = e.target.closest('[data-pick]');
+  if (pick) {
+    const cfg = SHEETS[sheetKey];
+    const value = pick.dataset.pick;
+    closeSheet();
+    if (cfg) setPath(cfg.path, value);
+  }
+});
+
+scrim.addEventListener('click', () => {
+  closeSheet();
+  sidebar.classList.remove('open');
+  scrim.classList.remove('show');
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeSheet();
+    sidebar.classList.remove('open');
+    scrim.classList.remove('show');
+  }
+});
+
+/* ---------------- 提示 ---------------- */
+let toastTimer = null;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+}
+
+/* ---------------- 图表 ---------------- */
+function initChart() {
+  const wrap = $('#chartWrap');
+  if (!wrap) return;
+  const svg = wrap.querySelector('svg');
+  const tip = $('#chartTip'), pillY = $('#pillY'), pillX = $('#pillX');
+  const vline = $('#cv'), hline = $('#ch'), dot = $('#cd');
+  if (!svg || !tip || !vline) return;
+
+  const g = chartGeom();
+  const { W, H, T, B, L, pts } = g;
+
+  function setMarker(i) {
+    i = Math.max(0, Math.min(pts.length - 1, i));
+    const p = pts[i];
+    const xPct = p.x / W * 100;
+    const yPct = p.y / H * 100;
+
+    vline.setAttribute('x1', p.x.toFixed(1));
+    vline.setAttribute('x2', p.x.toFixed(1));
+    hline.setAttribute('x1', L);
+    hline.setAttribute('x2', p.x.toFixed(1));
+    hline.setAttribute('y1', p.y.toFixed(1));
+    hline.setAttribute('y2', p.y.toFixed(1));
+    dot.setAttribute('cx', p.x.toFixed(1));
+    dot.setAttribute('cy', p.y.toFixed(1));
+
+    tip.innerHTML = `${CHART_DATES[i]}<b>${chartAmount(i)}</b>`;
+    tip.style.left = `${Math.min(64, Math.max(3, xPct + 2))}%`;
+    tip.style.top = `${yPct}%`;
+    tip.style.marginTop = '-12px';
+
+    pillY.textContent = chartWan(CHART.values[i]);
+    pillY.style.top = `${yPct}%`;
+    pillX.textContent = CHART_DATES[i];
+    pillX.style.left = `${xPct}%`;
+    pillX.style.top = `${B / H * 100}%`;
+  }
+
+  setMarker(CHART.marker);
+
+  const onMove = (e) => {
+    const r = svg.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * W;
+    let best = 0, bd = Infinity;
+    pts.forEach((p, i) => {
+      const d = Math.abs(p.x - x);
+      if (d < bd) { bd = d; best = i; }
+    });
+    setMarker(best);
+  };
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerdown', onMove);
+  svg.addEventListener('pointerleave', () => setMarker(CHART.marker));
+}
+
+/* ---------------- 悬浮回到顶部 ---------------- */
+function syncFab(route) {
+  const old = document.getElementById('fab');
+  if (old) old.remove();
+  if (route !== 'account-detail') return;
+  const btn = document.createElement('button');
+  btn.id = 'fab';
+  btn.className = 'top-fab';
+  btn.innerHTML = '回到<br>顶部';
+  btn.addEventListener('click', () => screen.scrollTo({ top: 0, behavior: 'smooth' }));
+  document.querySelector('.device-inner').appendChild(btn);
+}
+
+/* ---------------- 滚动 ---------------- */
+screen.addEventListener('scroll', () => {
+  const fab = document.getElementById('fab');
+  if (fab) fab.classList.toggle('show', screen.scrollTop > 60);
+
+  const cur = state.stack[state.stack.length - 1];
+  if (cur && cur.route === 'product-detail') spyPd();
+});
+
+function spyPd() {
+  const secs = $$('[data-pdsec]');
+  if (!secs.length) return;
+  const atBottom = screen.scrollTop + screen.clientHeight >= screen.scrollHeight - 6;
+  const top = screen.getBoundingClientRect().top + 118;
+  let active = secs[0].id;
+  secs.forEach(s => {
+    if (s.getBoundingClientRect().top <= top) active = s.id;
+  });
+  if (atBottom) active = secs[secs.length - 1].id;
+  state.ui.pd.tab = active;
+  $$('.pd-tab').forEach(t => t.classList.toggle('on', t.dataset.target === active));
+}
+
+/* ---------------- 事件 ---------------- */
+screen.addEventListener('click', (e) => {
+  const backBtn = e.target.closest('[data-back]');
+  if (backBtn) { back(); return; }
+
+  const nav = e.target.closest('[data-nav]');
+  if (nav) {
+    const id = nav.dataset.id;
+    go(nav.dataset.nav, id ? { id } : undefined);
+    return;
+  }
+
+  const act = e.target.closest('[data-act]');
+  if (!act) return;
+
+  switch (act.dataset.act) {
+    case 'overview':
+      state.ui.overview = !state.ui.overview;
+      rerender(false);
+      break;
+    case 'chip':
+      setPath(act.dataset.path, act.dataset.value);
+      break;
+    case 'sheet':
+      openSheet(act.dataset.sheet);
+      break;
+    case 'more':
+      toast('截图只包含这 5 条盈亏明细');
+      break;
+    case 'toast':
+      toast(act.dataset.msg || '演示原型');
+      break;
+    case 'searchCustomer':
+      filterCustomers();
+      break;
+    case 'searchProduct':
+      filterProducts();
+      break;
+    case 'pdtab': {
+      const target = act.dataset.target;
+      state.ui.pd.tab = target;
+      $$('.pd-tab').forEach(t => t.classList.toggle('on', t.dataset.target === target));
+      const el = document.getElementById(target);
+      if (el) {
+        const top = el.getBoundingClientRect().top - screen.getBoundingClientRect().top + screen.scrollTop - 104;
+        screen.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      }
+      break;
+    }
+    case 'rule':
+      state.ui.pd.rule = act.dataset.value;
+      rerender(true);
+      break;
+    case 'top':
+      screen.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+  }
+});
+
+/* 让 [role=button] 的整块卡片支持键盘回车/空格 */
+screen.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target.closest('[data-nav][role="button"]');
+  if (!el) return;
+  e.preventDefault();
+  el.click();
+});
+
+tabbar.addEventListener('click', (e) => {
+  const tab = e.target.closest('[data-tab]');
+  if (!tab) return;
+  state.stack = [{ route: tab.dataset.tab, params: {} }];
+  render();
+});
+
+/* ---------------- 页面地图 ---------------- */
+const MAP = [
+  {
+    group: '主导航', items: [
+      ['customer', '客户'], ['product', '产品'], ['workbench', '工作台'],
+      ['messages', '消息中心'], ['mine', '我的']
+    ]
+  },
+  {
+    group: '客户', items: [
+      ['customer-list', '证券客户列表'], ['customer-detail', '客户详情'], ['account-detail', '账户详情']
+    ]
+  },
+  {
+    group: '资产', items: [
+      ['assets', '我的资产（盈亏分析）'], ['asset-dist', '资产分布'], ['cash-flow', '资金明细'],
+      ['bank-cards', '银行卡信息'], ['bank-card', '银行卡详情']
+    ]
+  },
+  {
+    group: '交易', items: [
+      ['fund-orders', '基金订单'], ['order-detail', '订单详情']
+    ]
+  },
+  {
+    group: '消息', items: [
+      ['msg-trade', '交易类消息'], ['msg-fund', '资金类消息'], ['msg-account', '账户类消息']
+    ]
+  },
+  {
+    group: '产品', items: [
+      ['product-list', '证券产品列表'], ['product-detail', '产品详情']
+    ]
+  }
+];
+
+function renderMap() {
+  const nav = $('#sidelist');
+  if (!nav.dataset.built) {
+    nav.innerHTML = MAP.map(g => `
+      <div class="sgroup">
+        <h3>${g.group}</h3>
+        ${g.items.map(([route, label]) => `
+          <button class="sitem" data-map="${route}"><span class="dot"></span>${label}</button>`).join('')}
+      </div>`).join('');
+    nav.dataset.built = '1';
+    nav.addEventListener('click', (e) => {
+      const item = e.target.closest('[data-map]');
+      if (item) jump(item.dataset.map);
+    });
+  }
+  const cur = state.stack[state.stack.length - 1].route;
+  $$('.sitem').forEach(el => el.classList.toggle('active', el.dataset.map === cur));
+}
+
+$('#mapbtn').addEventListener('click', () => {
+  sidebar.classList.add('open');
+  scrim.classList.add('show');
+});
+
+/* ---------------- 启动 ---------------- */
+render();
+
+</script>
+</body>
+</html>
